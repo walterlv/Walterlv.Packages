@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFrameworks>net48;netcoreapp3.0</TargetFrameworks>
+    <UseWpf>True</UseWpf>
+    <RootNamespace>Walterlv</RootNamespace>
+  </PropertyGroup>
+
+</Project>

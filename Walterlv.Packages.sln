@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Packages.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Packages.Performance", "tests\Walterlv.Packages.Performance\Walterlv.Packages.Performance.csproj", "{BABAA81E-C4F7-4CCB-8879-AB6DD1892032}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Windows.Framework", "src\Frameworks\Walterlv.Windows.Framework\Walterlv.Windows.Framework.csproj", "{C85C2E74-44E7-471A-B23C-D99165CD5327}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{BABAA81E-C4F7-4CCB-8879-AB6DD1892032}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BABAA81E-C4F7-4CCB-8879-AB6DD1892032}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BABAA81E-C4F7-4CCB-8879-AB6DD1892032}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C85C2E74-44E7-471A-B23C-D99165CD5327}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C85C2E74-44E7-471A-B23C-D99165CD5327}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C85C2E74-44E7-471A-B23C-D99165CD5327}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C85C2E74-44E7-471A-B23C-D99165CD5327}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
