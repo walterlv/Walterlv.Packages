@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)..\bin\$(Configuration)</PackageOutputPath>
+    <Version>0.1.0-alpha</Version>
+    <Authors>walterlv</Authors>
+    <Company>walterlv</Company>
+    <Product>Walterlv.Packages</Product>
+    <Copyright>Copyright (c) 2019 dotnet campus</Copyright>
+    <RepositoryUrl>https://github.com/walterlv/Walterlv.Packages.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/walterlv/Walterlv.Packages</PackageProjectUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.16539-alpha" PrivateAssets="all" />
+  </ItemGroup>
+</Project>
