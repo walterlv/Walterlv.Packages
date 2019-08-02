@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace Walterlv.Windows.Themes
 {
-    internal class UniversalWindowStyle
+    public class UniversalWindowStyle
     {
         public static readonly DependencyProperty TitleBarProperty = DependencyProperty.RegisterAttached(
             "TitleBar", typeof(UniversalTitleBar), typeof(UniversalWindowStyle),
@@ -106,7 +106,7 @@ namespace Walterlv.Windows.Themes
             => Window.GetWindow((DependencyObject)sender)?.Close();
     }
 
-    internal class UniversalTitleBar
+    public class UniversalTitleBar
     {
         public Color ForegroundColor { get; set; } = Colors.Black;
         public Color InactiveForegroundColor { get; set; } = Color.FromRgb(0x99, 0x99, 0x99);
@@ -118,13 +118,13 @@ namespace Walterlv.Windows.Themes
         public Color ButtonPressedBackground { get; set; } = Color.FromRgb(0xCC, 0xCC, 0xCC);
     }
 
-    internal class UniversalWindow
+    public class UniversalWindow
     {
         public Color FrameColor { get; set; } = SystemParameters.WindowGlassColor;
         public Color InactiveFrameColor { get; set; } = Colors.DimGray;
     }
 
-    internal class UniversalWindowParameters
+    public class UniversalWindowParameters
     {
         public static double DefaultWindowWidth { get; } = (int)SystemParameters.PrimaryScreenHeight;
         public static double DefaultWindowHeight { get; } = (int)(SystemParameters.PrimaryScreenHeight * 0.75);

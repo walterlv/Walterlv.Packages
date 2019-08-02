@@ -25,7 +25,7 @@ namespace Walterlv.Windows.Navigating
 
         public string Title { get; }
 
-        internal static NavigationItem Combine<TView, TViewModel>(string title = null)
+        public static NavigationItem Combine<TView, TViewModel>(string title = null)
             where TView : UIElement, new()
             where TViewModel : class, new()
             => new NavigationItem<TView, TViewModel>(() => new TView(), () => new TViewModel(), title);
@@ -45,7 +45,7 @@ namespace Walterlv.Windows.Navigating
 
         public new TViewModel ViewModel => (TViewModel)base.ViewModel;
 
-        internal static NavigationItem Combine(string title = null)
+        public static NavigationItem Combine(string title = null)
             => new NavigationItem<TView, TViewModel>(() => new TView(), () => new TViewModel(), title);
     }
 }

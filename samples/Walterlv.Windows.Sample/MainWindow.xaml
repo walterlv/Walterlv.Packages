@@ -1,0 +1,112 @@
+﻿<Window x:Class="Walterlv.Windows.Sample.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:themes="clr-namespace:Walterlv.Windows.Themes;assembly=Walterlv.Themes.FluentDesign"
+        xmlns:effects="clr-namespace:Walterlv.Windows.Effects;assembly=Walterlv.Themes.FluentDesign"
+        xmlns:local="clr-namespace:Walterlv.Windows.Sample"
+        mc:Ignorable="d"
+        Title="Walterlv Packages Sample"
+        Style="{StaticResource Style.Window.Universal}"
+        Foreground="{StaticResource Brush.Foreground}"
+        Background="{StaticResource Brush.Background}">
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+    </Window.Resources>
+    <themes:UniversalWindowStyle.TitleBar>
+        <themes:UniversalTitleBar ForegroundColor="{StaticResource Color.Foreground}" InactiveForegroundColor="{StaticResource Color.Foreground.Disable}"
+                                  ButtonForegroundColor="{StaticResource Color.Foreground}" ButtonInactiveForegroundColor="{StaticResource Color.Foreground.Disable}"
+                                  ButtonHoverForeground="{StaticResource Color.Foreground}" ButtonHoverBackground="{StaticResource Color.Theme.Light1}"
+                                  ButtonPressedForeground="{StaticResource Color.Foreground}" ButtonPressedBackground="{StaticResource Color.Theme.Dark1}" />
+    </themes:UniversalWindowStyle.TitleBar>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
+            <RowDefinition Height="40" />
+            <RowDefinition />
+            <RowDefinition Height="48" />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Background="{StaticResource Brush.Theme}" />
+        <ListView x:Name="NavigationListView" Grid.Row="1"
+                  BorderThickness="0" Background="{StaticResource Brush.Background.Header}"
+                  ItemsSource="{Binding PageItems}"
+                  VirtualizingPanel.ScrollUnit="Pixel"
+                  VirtualizingPanel.IsVirtualizing="True">
+            <ListView.Template>
+                <ControlTemplate TargetType="{x:Type ListBox}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"
+                            SnapsToDevicePixels="True">
+                        <ScrollViewer Focusable="False" Padding="{TemplateBinding Padding}">
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </ListView.Template>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel Margin="40 0" Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="FontSize" Value="16" />
+                    <Setter Property="Foreground" Value="{StaticResource Brush.Foreground}" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Border x:Name="Bd" MinWidth="80" Padding="20 0"
+                                        BorderBrush="{StaticResource Brush.Theme.Light1}"
+                                        Background="{TemplateBinding Background}">
+                                    <ContentPresenter x:Name="Cp" Opacity="0.5"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Bd" Property="BorderThickness" Value="0 0 0 4" />
+                                        <Setter TargetName="Cp" Property="Margin" Value="0 0 0 -4" />
+                                        <Setter TargetName="Cp" Property="Opacity" Value="1" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource Brush.Background.Float}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate DataType="navi:NavigationItem">
+                    <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Border Grid.Row="2" d:DataContext="{d:DesignData navi:NavigationItem}"
+                DataContext="{Binding SelectedItem, Source={x:Reference NavigationListView}}">
+            <ContentPresenter Content="{Binding View}" />
+        </Border>
+        <Grid Grid.Row="3" Background="{StaticResource Brush.Background.Footer}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="1" Margin="12 0" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="完成" FontSize="14" Padding="24 0" Height="32"
+                        Foreground="{StaticResource Brush.Foreground}"
+                        Background="{StaticResource Brush.Theme}" BorderThickness="1">
+                    <Button.BorderBrush>
+                        <effects:RevealBorderBrush />
+                    </Button.BorderBrush>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

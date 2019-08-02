@@ -11,7 +11,7 @@ namespace Walterlv.Windows.Effects
     /// <summary>
     /// Paints a control border with a reveal effect using composition brush and light effects.
     /// </summary>
-    internal class RevealBorderBrushExtension : MarkupExtension
+    public class RevealBorderBrushExtension : MarkupExtension
     {
         [ThreadStatic]
         private static Dictionary<RadialGradientBrush, WeakReference<FrameworkElement>> _globalRevealingElements;
