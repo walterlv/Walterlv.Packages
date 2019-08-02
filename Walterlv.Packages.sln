@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.Collections", "src\Utils\Walterlv.Collections\Walterlv.Collections.csproj", "{C80221BF-27EB-488E-8DCD-85D8323273DA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{121B8FE9-430E-4230-A21C-5D441D73E411}"
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
@@ -12,18 +10,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D95A793C-1D14-4AA6-A552-D3C8CAD6BD45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Packages.Performance", "tests\Walterlv.Packages.Performance\Walterlv.Packages.Performance.csproj", "{BABAA81E-C4F7-4CCB-8879-AB6DD1892032}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Packages.Tests", "tests\Walterlv.Packages.Tests\Walterlv.Packages.Tests.csproj", "{0559B38A-5312-4132-8EF0-D993FFA707CF}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9CBF0509-7CD4-4B23-B4EE-858A63B7860A}"
 	ProjectSection(SolutionItems) = preProject
 		src\Directory.Build.props = src\Directory.Build.props
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D95A793C-1D14-4AA6-A552-D3C8CAD6BD45}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Packages.Tests", "tests\Walterlv.Packages.Tests\Walterlv.Packages.Tests.csproj", "{0559B38A-5312-4132-8EF0-D993FFA707CF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Packages.Performance", "tests\Walterlv.Packages.Performance\Walterlv.Packages.Performance.csproj", "{BABAA81E-C4F7-4CCB-8879-AB6DD1892032}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Windows.Framework", "src\Frameworks\Walterlv.Windows.Framework\Walterlv.Windows.Framework.csproj", "{C85C2E74-44E7-471A-B23C-D99165CD5327}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.Collections", "src\Utils\Walterlv.Collections\Walterlv.Collections.csproj", "{C80221BF-27EB-488E-8DCD-85D8323273DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
