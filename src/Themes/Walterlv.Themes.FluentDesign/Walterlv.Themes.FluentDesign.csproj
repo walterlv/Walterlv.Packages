@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net48;netcoreapp3.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
-    <RootNamespace>Walterlv</RootNamespace>
+    <RootNamespace>Walterlv.Windows</RootNamespace>
   </PropertyGroup>
 
 </Project>
