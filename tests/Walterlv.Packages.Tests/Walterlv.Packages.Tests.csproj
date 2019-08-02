@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <IsPackable>false</IsPackable>
     <RootNamespace>Walterlv.Tests</RootNamespace>
   </PropertyGroup>
