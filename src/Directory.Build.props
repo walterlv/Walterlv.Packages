@@ -2,7 +2,7 @@
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>$(MSBuildThisFileDirectory)..\bin\$(Configuration)</PackageOutputPath>
-    <Version>0.1.0-alpha</Version>
+    <Version>0.2.0-alpha</Version>
     <Authors>walterlv</Authors>
     <Company>walterlv</Company>
     <Product>Walterlv.Packages</Product>
