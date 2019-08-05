@@ -24,7 +24,7 @@ namespace Walterlv.Tests.Collections.Generic
                 GC.Collect();
 
                 // Assert
-                Assert.AreEqual(1, collection.Count());
+                Assert.AreEqual(1, collection.TryGetItems(x => true).Length);
             });
 
             "移除元素，被强引用的元素也被移除，于是 GC 后没有元素了。".Test(() =>
@@ -40,7 +40,7 @@ namespace Walterlv.Tests.Collections.Generic
                 GC.Collect();
 
                 // Assert
-                Assert.AreEqual(0, collection.Count());
+                Assert.AreEqual(0, collection.TryGetItems(x => true).Length);
             });
         }
     }
