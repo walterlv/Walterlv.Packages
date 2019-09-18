@@ -80,7 +80,7 @@ namespace Walterlv.WeakEvents
             if (!anyAlive)
             {
                 // 如果没有任何订阅者存活，那么要求派生类清除事件源的订阅，这可以清除此事件中继的实例。
-                OnRefereceLost(_eventSource);
+                OnReferenceLost(_eventSource);
             }
         }
 
@@ -95,6 +95,6 @@ namespace Walterlv.WeakEvents
         /// 如果调用多次，说明事件在引发/回收之后有对象发生了新的订阅。
         /// 如果永远不会调用，这是个好事，说明事件源自己已经被回收了，那么此中继对象自然也被回收；这时不调用此方法也不会产生任何泄漏。
         /// </remarks>
-        protected abstract void OnRefereceLost(TEventSource source);
+        protected abstract void OnReferenceLost(TEventSource source);
     }
 }
