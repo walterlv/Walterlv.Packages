@@ -10,7 +10,7 @@
         Title="Walterlv Packages Sample"
         Style="{StaticResource Style.Window.Universal}"
         Foreground="{StaticResource Brush.Foreground}"
-        Background="{StaticResource Brush.Background}">
+        Background="Transparent">
     <Window.DataContext>
         <local:MainViewModel />
     </Window.DataContext>

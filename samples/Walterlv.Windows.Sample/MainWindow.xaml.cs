@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Walterlv.Windows.Effects;
 
 namespace Walterlv.Windows.Sample
 {
@@ -20,6 +21,13 @@ namespace Walterlv.Windows.Sample
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var blur = new WindowAccentCompositor(this);
+            blur.IsEnabled = true;
         }
     }
 }
