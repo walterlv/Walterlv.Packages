@@ -1,0 +1,9 @@
+<Project>
+  
+  <Target Name="_GenerateDocumentationFile" BeforeTargets="BeforeBuild">
+    <PropertyGroup>
+      <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    </PropertyGroup>
+  </Target>
+  
+</Project>

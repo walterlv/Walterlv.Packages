@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>net48;netcoreapp3.0</TargetFrameworks>
-    <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <RootNamespace>Walterlv</RootNamespace>
   </PropertyGroup>
 
