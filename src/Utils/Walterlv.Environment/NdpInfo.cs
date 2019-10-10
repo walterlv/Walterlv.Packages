@@ -10,6 +10,8 @@ namespace Walterlv
     /// <summary>
     /// 包含 .NET Framework 开发平台（NET Developer Platform）的若干信息。
     /// 这与 CLR 运行时信息不同。通常，4.0/4.5/4.6/4.7/4.8 开发平台都对应 4.0 的 CLR 运行时。
+    /// 关于各个系统自带的 .NET Framework 版本，请参阅：
+    ///  - https://blog.walterlv.com/post/embeded-dotnet-version-in-all-windows.html
     /// </summary>
     public sealed class NdpInfo
     {
@@ -129,46 +131,46 @@ namespace Walterlv
         /// <summary>
         /// 获取 .NET Framework 4.5 及以上版本的发行号与版本名称的对应关系。
         /// 4.5 及以下版本没有这样的对应关系。
+        /// 关于各个系统自带的 .NET Framework 版本，请参阅：
+        ///  - https://blog.walterlv.com/post/embeded-dotnet-version-in-all-windows.html
         /// </summary>
         private static readonly Dictionary<int, string> ReleaseToNameDictionary = new Dictionary<int, string>
         {
             // .NET Framework 4.5
             { 378389, "4.5" },
-            // .NET Framework 4.5.1 installed with Windows 8.1 or Windows Server 2012 R2
+            // .NET Framework 4.5.1（Windows 8.1 或 Windows Server 2012 R2 自带）
             { 378675, "4.5.1" },
-            // .NET Framework 4.5.1 installed on Windows 8, Windows 7 SP1, or Windows Vista SP2
+            // .NET Framework 4.5.1（其他系统安装）
             { 378758, "4.5.1" },
             // .NET Framework 4.5.2
             { 379893, "4.5.2" },
-            // .NET Framework 4.6 On Windows 10
+            // .NET Framework 4.6（Windows 10 第一个版本 1507 自带）
             { 393295, "4.6" },
-            // .NET Framework 4.6 On all other OS
+            // .NET Framework 4.6（其他系统安装）
             { 393297, "4.6" },
-            // .NET Framework 4.6.1 On Windows 10 November Update
+            // .NET Framework 4.6.1（Windows 10 十一月更新 1511 自带）
             { 394254, "4.6.1" },
-            // .NET Framework 4.6.1 On all other OS
+            // .NET Framework 4.6.1（其他系统安装）
             { 394271, "4.6.1" },
-            // .NET Framework 4.6.2 On Windows 10 Anniversary Update
+            // .NET Framework 4.6.2（Windows 10 一周年更新 1607 和 Windows Server 2016 自带）
             { 394802, "4.6.2" },
-            // .NET Framework 4.6.2 On all other OS
+            // .NET Framework 4.6.2（其他系统安装）
             { 394806, "4.6.2" },
-            // .NET Framework 4.7 On Windows 10 Creators Update
+            // .NET Framework 4.7（Windows 10 创造者更新 1703 自带）
             { 460798, "4.7" },
-            // .NET Framework 4.7 On all other OS
+            // .NET Framework 4.7（其他系统安装）
             { 460805, "4.7" },
-            // .NET Framework 4.7.1 On Windows 10 Fall Creators Update
+            // .NET Framework 4.7.1（Windows 10 秋季创造者更新 1709 和 Windows Server 1709 自带）
             { 461308, "4.7.1" },
-            // .NET Framework 4.7.1 On all other OS
+            // .NET Framework 4.7.1（其他系统安装）
             { 461310, "4.7.1" },
-            // .NET Framework 4.7.2 On Windows 10 October 2018 Update
-            { 461814, "4.7.2" },
-            // .NET Framework 4.7.2 On Windows 10 April 2018 Update and Windows Server, version 1803
+            // .NET Framework 4.7.2（Windows 10 2018年四月更新 1803 和 Windows Server 1803 自带）
             { 461808, "4.7.2" },
-            // .NET Framework 4.7.2 On all other OS
+            // .NET Framework 4.7.2（其他系统安装）
             { 461814, "4.7.2" },
-            // .NET Framework 4.8 On Windows 10 May 2019 Update
+            // .NET Framework 4.8（Windows 10 2019年五月更新 1903 自带）
             { 528040, "4.8" },
-            // .NET Framework 4.8 On all other OS
+            // .NET Framework 4.8（其他系统安装）
             { 528049, "4.8" },
         };
 
@@ -235,7 +237,7 @@ namespace Walterlv
                 }
             }
 
-            static Dictionary<string, NdpInfo> ReadCore(RegistryKey ndpKey)
+            Dictionary<string, NdpInfo> ReadCore(RegistryKey ndpKey)
             {
                 // 保存读取到的所有 .NET Framework 可共存分支及其对应的就地更新版本号。
                 var dictionary = new Dictionary<string, NdpInfo>();
