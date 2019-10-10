@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net48;netcoreapp3.0</TargetFrameworks>
+    <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <RootNamespace>Walterlv</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.0'">
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="3.0.0" />
+  </ItemGroup>
+  
+</Project>

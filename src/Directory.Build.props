@@ -4,7 +4,7 @@
     <NullableContextOptions>enable</NullableContextOptions>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>$(MSBuildThisFileDirectory)..\bin\$(Configuration)</PackageOutputPath>
-    <Version>0.5.0-alpha</Version>
+    <Version>0.6.0-alpha</Version>
     <Authors>walterlv</Authors>
     <Company>walterlv</Company>
     <Product>Walterlv.Packages</Product>
@@ -13,6 +13,6 @@
     <PackageProjectUrl>https://github.com/walterlv/Walterlv.Packages</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.17750-alpha" PrivateAssets="all" />
+    <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.16539-alpha" PrivateAssets="all" />
   </ItemGroup>
 </Project>
