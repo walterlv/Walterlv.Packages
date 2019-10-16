@@ -66,10 +66,10 @@ namespace Walterlv.Windows.Effects
         {
             Window window = _window;
             var handle = new WindowInteropHelper(window).EnsureHandle();
-            Blur(handle, isEnabled);
+            Composite(handle, isEnabled);
         }
 
-        private void Blur(IntPtr handle, bool isEnabled)
+        private void Composite(IntPtr handle, bool isEnabled)
         {
             // 操作系统版本判定。
             var osVersion = Environment.OSVersion.Version;

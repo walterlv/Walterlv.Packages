@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Frameworks\Walterlv.Windows.Framework\Walterlv.Windows.Framework.csproj" />
     <ProjectReference Include="..\..\src\Themes\Walterlv.Themes.FluentDesign\Walterlv.Themes.FluentDesign.csproj" />
+    <ProjectReference Include="..\..\src\Utils\Walterlv.Environment\Walterlv.Environment.csproj" />
   </ItemGroup>
 
 </Project>

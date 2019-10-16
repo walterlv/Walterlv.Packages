@@ -24,10 +24,11 @@ namespace Walterlv.Windows.Sample
             Loaded += OnLoaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var blur = new WindowAccentCompositor(this);
-            blur.IsEnabled = true;
+            //var blur = new WindowAccentCompositor(this);
+            //blur.Color = Color.FromArgb(0x3f, 0x18, 0xa0, 0x5e);
+            //blur.IsEnabled = true;
         }
     }
 }
