@@ -36,9 +36,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.Windows", "src\Uti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.WeakEvents", "src\Utils\Walterlv.WeakEvents\Walterlv.WeakEvents.csproj", "{DF426317-A4FA-40F9-BEF6-9CC389CE8653}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Environment", "src\Utils\Walterlv.Environment\Walterlv.Environment.csproj", "{28B2A1C2-7765-4045-B687-A3CD94EC7013}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.Environment", "src\Utils\Walterlv.Environment\Walterlv.Environment.csproj", "{28B2A1C2-7765-4045-B687-A3CD94EC7013}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Win32", "src\Utils\Walterlv.Win32\Walterlv.Win32.csproj", "{5DECED0E-5B78-47D3-94F2-DC43526C9F93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.Win32", "src\Utils\Walterlv.Win32\Walterlv.Win32.csproj", "{5DECED0E-5B78-47D3-94F2-DC43526C9F93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.IO.PackageManagement", "src\Utils\Walterlv.IO.PackageManagement\Walterlv.IO.PackageManagement.csproj", "{288E146D-5125-4110-BB4F-3FA28CEED702}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,6 +88,10 @@ Global
 		{5DECED0E-5B78-47D3-94F2-DC43526C9F93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DECED0E-5B78-47D3-94F2-DC43526C9F93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DECED0E-5B78-47D3-94F2-DC43526C9F93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{288E146D-5125-4110-BB4F-3FA28CEED702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{288E146D-5125-4110-BB4F-3FA28CEED702}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{288E146D-5125-4110-BB4F-3FA28CEED702}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{288E146D-5125-4110-BB4F-3FA28CEED702}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
