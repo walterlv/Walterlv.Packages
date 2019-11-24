@@ -263,7 +263,7 @@ namespace Walterlv.WeakEvents
     /// 1. https://blog.walterlv.com/post/implement-custom-dotnet-weak-event.html
     /// 2. https://blog.walterlv.com/post/implement-custom-dotnet-weak-event-relay.html
     /// </remarks>
-    internal class WeakEvent<TArgs> : WeakEvent<object, TArgs>
+    public class WeakEvent<TArgs> : WeakEvent<object, TArgs>
     {
     }
 }
