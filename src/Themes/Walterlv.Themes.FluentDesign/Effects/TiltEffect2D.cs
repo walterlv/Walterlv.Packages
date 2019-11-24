@@ -24,6 +24,8 @@ namespace Walterlv.Windows.Effects
         /// <summary>
         /// 设置是否开启倾斜效果。
         /// </summary>
+        /// <param name="element">要设置倾斜效果的元素。</param>
+        /// <param name="value">true 表示设置倾斜效果，false 表示取消倾斜效果。</param>
         public static void SetIsEnabled(DependencyObject element, bool value)
         {
             element.SetValue(IsEnabledProperty, value);
@@ -32,6 +34,7 @@ namespace Walterlv.Windows.Effects
         /// <summary>
         /// 获取是否开启倾斜效果。
         /// </summary>
+        /// <param name="element">要获取倾斜效果的元素。</param>
         public static bool GetIsEnabled(DependencyObject element)
         {
             return (bool)element.GetValue(IsEnabledProperty);
@@ -47,6 +50,8 @@ namespace Walterlv.Windows.Effects
         /// <summary>
         /// 设置倾斜效果，设置此属性为非 null 会自动打开此元素的倾斜效果。
         /// </summary>
+        /// <param name="element">要设置倾斜效果的元素。</param>
+        /// <param name="value">设置的倾斜效果。</param>
         public static void SetTiltEffect(DependencyObject element, TiltEffect2D value)
         {
             element.SetValue(IsEnabledProperty, value);
@@ -55,6 +60,7 @@ namespace Walterlv.Windows.Effects
         /// <summary>
         /// 获取倾斜效果。
         /// </summary>
+        /// <param name="element">要获取倾斜效果的元素。</param>
         public static TiltEffect2D GetTiltEffect(DependencyObject element)
         {
             return (TiltEffect2D)element.GetValue(IsEnabledProperty);
@@ -120,18 +126,18 @@ namespace Walterlv.Windows.Effects
         private readonly MouseButtonEventHandler _upHandler;
         private readonly MouseEventHandler _leaveHandler;
 
-        private FrameworkElement _target;
-        private Lazy<Storyboard> _tiltDownStoryboard;
-        private Lazy<Storyboard> _tiltUpStoryboard;
-        private Storyboard TiltDownStoryboard => _tiltDownStoryboard.Value;
-        private Storyboard TiltUpStoryboard => _tiltUpStoryboard.Value;
+        private FrameworkElement? _target;
+        private Lazy<Storyboard>? _tiltDownStoryboard;
+        private Lazy<Storyboard>? _tiltUpStoryboard;
+        private Storyboard? TiltDownStoryboard => _tiltDownStoryboard?.Value;
+        private Storyboard? TiltUpStoryboard => _tiltUpStoryboard?.Value;
 
         /// <summary>
         /// 当前正在倾斜时，获取或设置元素的根父级。
         /// 同一父子链下的元素通过此依赖对象获取 <see cref="IsTiltingProperty"/> 属性时可拿到同一个值。
         /// 这可以避免带有嵌套倾斜的元素出现多重倾斜效果。
         /// </summary>
-        private DependencyObject _currentRoot;
+        private DependencyObject? _currentRoot;
 
         /// <summary>
         /// 获取或设置按下时倾斜动画播放的时长。
@@ -153,6 +159,7 @@ namespace Walterlv.Windows.Effects
         /// <summary>
         /// 开启倾斜效果。
         /// </summary>
+        /// <param name="element">要开启倾斜效果的元素。</param>
         private void Enable(FrameworkElement element)
         {
             _target = element;
@@ -182,42 +189,50 @@ namespace Walterlv.Windows.Effects
 
         private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (_target.GetValue(IsTiltingProperty) is true)
+            var target = _target;
+            if (target is null)
             {
                 return;
             }
 
-            _currentRoot = FindRootVisual(_target);
+            if (target.GetValue(IsTiltingProperty) is true)
+            {
+                return;
+            }
+
+            _currentRoot = FindRootVisual(target);
             _currentRoot.SetValue(IsTiltingProperty, true);
 
             var position = e.GetPosition(_target);
-            _target.RenderTransformOrigin = new Point(
-                1 - position.X / _target.ActualWidth,
-                1 - position.Y / _target.ActualHeight);
+            target.RenderTransformOrigin = new Point(
+                1 - position.X / target.ActualWidth,
+                1 - position.Y / target.ActualHeight);
 
-            TiltUpStoryboard.Stop(_target);
-            TiltDownStoryboard.Begin(_target);
+            TiltUpStoryboard?.Stop(_target);
+            TiltDownStoryboard?.Begin(_target);
         }
 
         private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             _currentRoot?.ClearValue(IsTiltingProperty);
 
-            TiltDownStoryboard.Stop(_target);
-            TiltUpStoryboard.Begin(_target);
+            TiltDownStoryboard?.Stop(_target);
+            TiltUpStoryboard?.Begin(_target);
         }
 
         private void OnMouseLeave(object sender, MouseEventArgs e)
         {
             _currentRoot?.ClearValue(IsTiltingProperty);
 
-            TiltDownStoryboard.Stop(_target);
-            TiltUpStoryboard.Begin(_target);
+            TiltDownStoryboard?.Stop(_target);
+            TiltUpStoryboard?.Begin(_target);
         }
 
         /// <summary>
         /// 创建倾斜效果的故事板。
         /// </summary>
+        /// <param name="element">要创建倾斜效果的元素。</param>
+        /// <param name="shouldScale">是否通过缩放来模拟倾斜效果。</param>
         [Pure]
         private Storyboard CreateTiltStoryboard(FrameworkElement element, bool shouldScale)
         {
@@ -301,6 +316,7 @@ namespace Walterlv.Windows.Effects
         /// <summary>
         /// 查找某个元素当前的根元素，用于避免带有嵌套倾斜的元素出现多重倾斜效果。
         /// </summary>
+        /// <param name="element">查找跟元素的查找源。</param>
         private static DependencyObject FindRootVisual(DependencyObject element)
         {
             var parent = LogicalTreeHelper.GetParent(element) ?? VisualTreeHelper.GetParent(element);

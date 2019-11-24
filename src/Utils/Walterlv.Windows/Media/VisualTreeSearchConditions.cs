@@ -8,7 +8,7 @@ namespace Walterlv.Windows.Media
     public class VisualTreeSearchConditions
     {
         private readonly Visual _self;
-        private Func<bool> _conditions;
+        private Func<bool>? _conditions;
 
         internal VisualTreeSearchConditions(Visual self)
         {
@@ -21,7 +21,7 @@ namespace Walterlv.Windows.Media
             return this;
         }
 
-        public VisualTreeSearchConditions ParentIs<T>(string name = null)
+        public VisualTreeSearchConditions ParentIs<T>(string? name = null)
             where T : Visual
         {
             var v = VisualTreeHelper.GetParent(_self);
@@ -29,7 +29,7 @@ namespace Walterlv.Windows.Media
             return this;
         }
 
-        public VisualTreeSearchConditions HasChild<T>(string name = null)
+        public VisualTreeSearchConditions HasChild<T>(string? name = null)
             where T : Visual
         {
             _conditions += () =>
@@ -51,6 +51,11 @@ namespace Walterlv.Windows.Media
 
         internal bool CheckMatch()
         {
+            if (_conditions is null)
+            {
+                return true;
+            }
+
             return _conditions.GetInvocationList().Cast<Func<bool>>().All(x => x());
         }
     }

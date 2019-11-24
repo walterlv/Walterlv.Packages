@@ -49,6 +49,6 @@ namespace Walterlv.Windows.Input
         /// <summary>
         /// 当命令的可执行性改变时发生。
         /// </summary>
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
     }
 }

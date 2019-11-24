@@ -360,7 +360,7 @@ namespace Walterlv.IO.PackageManagement.Core
             }
         }
 
-        private static string InternalGetTarget(SafeFileHandle handle)
+        private static string? InternalGetTarget(SafeFileHandle handle)
         {
             var outBufferSize = Marshal.SizeOf(typeof(REPARSE_DATA_BUFFER));
             var outBuffer = Marshal.AllocHGlobal(outBufferSize);

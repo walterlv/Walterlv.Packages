@@ -16,7 +16,7 @@ namespace Walterlv.Win32
         /// </summary>
         /// <param name="match">过滤窗口的条件。如果设置为 null，将仅查找可见窗口。</param>
         /// <returns>找到的所有窗口信息。</returns>
-        public static IReadOnlyList<WindowInfo> FindAll(Predicate<WindowInfo> match = null)
+        public static IReadOnlyList<WindowInfo> FindAll(Predicate<WindowInfo>? match = null)
         {
             var windowList = new List<WindowInfo>();
             EnumWindows(OnWindowEnum, 0);

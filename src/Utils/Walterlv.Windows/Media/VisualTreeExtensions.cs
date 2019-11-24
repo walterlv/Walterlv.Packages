@@ -25,7 +25,7 @@ namespace Walterlv.Windows.Media
         }
 
         public static IEnumerable<T> FindDecendents<T>(this Visual visual,
-            Func<VisualTreeSearchConditions, VisualTreeSearchConditions> condition = null)
+            Func<VisualTreeSearchConditions, VisualTreeSearchConditions>? condition = null)
             where T : Visual
         {
             if (visual is null)
@@ -36,8 +36,11 @@ namespace Walterlv.Windows.Media
             foreach (var v in EnumerateDecendents(visual).OfType<T>())
             {
                 var c = new VisualTreeSearchConditions(v);
-                c = condition(c);
-                if (c.CheckMatch())
+                if (condition is null)
+                {
+                    yield return v;
+                }
+                else if (c.CheckMatch())
                 {
                     yield return v;
                 }

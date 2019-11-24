@@ -45,8 +45,13 @@ namespace Walterlv.WeakEvents
         /// 有关详细写法，请参阅文档：
         /// https://blog.walterlv.com/post/implement-custom-dotnet-weak-event-relay.html
         /// </remarks>
-        protected void Subscribe(Action<TEventSource> sourceEventAdder, Action relayEventAdder, [CallerMemberName] string eventName = null)
+        protected void Subscribe(Action<TEventSource> sourceEventAdder, Action relayEventAdder, [CallerMemberName] string? eventName = null)
         {
+            if (eventName is null)
+            {
+                throw new ArgumentNullException(nameof(eventName));
+            }
+
             //                                  <--订阅--   [最终订阅者 1]
             // [事件源]   <--订阅--   [事件中继]   <--订阅--   [最终订阅者 2]
             //                                  <--订阅--   [最终订阅者 3]

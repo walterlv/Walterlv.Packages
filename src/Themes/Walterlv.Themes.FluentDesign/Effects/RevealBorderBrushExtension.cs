@@ -14,7 +14,7 @@ namespace Walterlv.Windows.Effects
     public class RevealBorderBrushExtension : MarkupExtension
     {
         [ThreadStatic]
-        private static Dictionary<RadialGradientBrush, WeakReference<FrameworkElement>> _globalRevealingElements;
+        private static Dictionary<RadialGradientBrush, WeakReference<FrameworkElement>>? GlobalRevealingElements;
 
         /// <summary>
         /// The color to use for rendering in case the <see cref="MarkupExtension"/> can't work correctly.
@@ -34,18 +34,29 @@ namespace Walterlv.Windows.Effects
 
         public double Radius { get; set; } = 100.0;
 
-        public override object ProvideValue(IServiceProvider serviceProvider)
+        public override object? ProvideValue(IServiceProvider serviceProvider)
         {
             // 如果没有服务，则直接返回。
             if (!(serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget service))
+            {
                 return null;
+            }
+
             // MarkupExtension 在样式模板中，返回 this 以延迟提供值。
-            if (service.TargetObject.GetType().Name.EndsWith("SharedDp"))
+            if (service.TargetObject.GetType().Name.EndsWith("SharedDp", StringComparison.Ordinal))
+            {
                 return this;
+            }
+
             if (!(service.TargetObject is FrameworkElement element))
+            {
                 return this;
+            }
+
             if (DesignerProperties.GetIsInDesignMode(element))
+            {
                 return new SolidColorBrush(FallbackColor);
+            }
 
             var brush = CreateGlobalBrush(element);
             return brush;
@@ -57,35 +68,32 @@ namespace Walterlv.Windows.Effects
             rootVisual.MouseMove += OnMouseMove;
             return brush;
 
-            void OnMouseMove(object sender, MouseEventArgs e)
-            {
-                UpdateBrush(brush, e.GetPosition(element));
-            }
+            void OnMouseMove(object sender, MouseEventArgs e) => UpdateBrush(brush, e.GetPosition(element));
         }
 
         private Brush CreateGlobalBrush(FrameworkElement element)
         {
             var brush = CreateRadialGradientBrush();
-            if (_globalRevealingElements is null)
+            if (GlobalRevealingElements is null)
             {
                 CompositionTarget.Rendering -= OnRendering;
                 CompositionTarget.Rendering += OnRendering;
-                _globalRevealingElements = new Dictionary<RadialGradientBrush, WeakReference<FrameworkElement>>();
+                GlobalRevealingElements = new Dictionary<RadialGradientBrush, WeakReference<FrameworkElement>>();
             }
 
-            _globalRevealingElements.Add(brush, new WeakReference<FrameworkElement>(element));
+            GlobalRevealingElements.Add(brush, new WeakReference<FrameworkElement>(element));
             return brush;
         }
 
-        private void OnRendering(object sender, EventArgs e)
+        private void OnRendering(object? sender, EventArgs e)
         {
-            if (_globalRevealingElements is null)
+            if (GlobalRevealingElements is null)
             {
                 return;
             }
 
             var toCollect = new List<RadialGradientBrush>();
-            foreach (var pair in _globalRevealingElements)
+            foreach (var pair in GlobalRevealingElements)
             {
                 var brush = pair.Key;
                 var weak = pair.Value;
@@ -101,13 +109,10 @@ namespace Walterlv.Windows.Effects
 
             foreach (var brush in toCollect)
             {
-                _globalRevealingElements.Remove(brush);
+                GlobalRevealingElements.Remove(brush);
             }
 
-            void Reveal(RadialGradientBrush brush, IInputElement element)
-            {
-                UpdateBrush(brush, Mouse.GetPosition(element));
-            }
+            void Reveal(RadialGradientBrush brush, IInputElement element) => UpdateBrush(brush, Mouse.GetPosition(element));
         }
 
         private void UpdateBrush(RadialGradientBrush brush, Point origin)

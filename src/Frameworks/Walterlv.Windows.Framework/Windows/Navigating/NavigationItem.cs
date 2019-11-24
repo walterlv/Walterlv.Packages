@@ -8,24 +8,24 @@ namespace Walterlv.Windows.Navigating
     {
         private readonly Func<UIElement> _viewCreator;
         private readonly Func<object> _viewModelCreator;
-        private UIElement _view;
-        private object _viewModel;
+        private UIElement? _view;
+        private object? _viewModel;
 
         public NavigationItem(Func<UIElement> viewCreator, Func<object> viewModelCreator,
-            string title = null)
+            string? title = null)
         {
             _viewCreator = viewCreator ?? throw new ArgumentNullException(nameof(viewCreator));
             _viewModelCreator = viewModelCreator ?? throw new ArgumentNullException(nameof(viewModelCreator));
-            Title = title;
+            Title = title ?? "";
         }
 
         public UIElement View => _view ?? (_view = _viewCreator());
 
         public object ViewModel => _viewModel ?? (_viewModel = _viewModelCreator());
 
-        public string Title { get; }
+        public string? Title { get; }
 
-        public static NavigationItem Combine<TView, TViewModel>(string title = null)
+        public static NavigationItem Combine<TView, TViewModel>(string? title = null)
             where TView : UIElement, new()
             where TViewModel : class, new()
             => new NavigationItem<TView, TViewModel>(() => new TView(), () => new TViewModel(), title);
@@ -36,7 +36,7 @@ namespace Walterlv.Windows.Navigating
         where TViewModel : class, new()
     {
         public NavigationItem(Func<TView> viewCreator, Func<TViewModel> viewModelCreator,
-            string title = null)
+            string? title = null)
             : base(viewCreator, viewModelCreator, title)
         {
         }
@@ -45,7 +45,7 @@ namespace Walterlv.Windows.Navigating
 
         public new TViewModel ViewModel => (TViewModel)base.ViewModel;
 
-        public static NavigationItem Combine(string title = null)
+        public static NavigationItem Combine(string? title = null)
             => new NavigationItem<TView, TViewModel>(() => new TView(), () => new TViewModel(), title);
     }
 }

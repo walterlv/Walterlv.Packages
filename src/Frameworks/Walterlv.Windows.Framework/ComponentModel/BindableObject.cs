@@ -17,13 +17,13 @@ namespace Walterlv.ComponentModel
         /// 当此实例中的任何一个具有更改通知的属性值改变时发生。
         /// 派生类可以通过调用 <see cref="SetValue{T}"/> 或 <see cref="OnPropertyChanged"/> 来引发此事件。
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// 当具有更改通知的属性值改变时发生。
         /// </summary>
         /// <param name="propertyName">属性名称。不需要手动传入，会自动根据所在属性的方法名设置此参数值。</param>
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -36,7 +36,7 @@ namespace Walterlv.ComponentModel
         /// <param name="value">要修改的字段的新值。</param>
         /// <param name="propertyName">属性名称。不需要手动传入，会自动根据所在属性的方法名设置此参数值。</param>
         /// <returns>如果值发生了更改，则返回 true；否则返回 false。</returns>
-        protected bool SetValue<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected bool SetValue<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (!Equals(field, value))
             {

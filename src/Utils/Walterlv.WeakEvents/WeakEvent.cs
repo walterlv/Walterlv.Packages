@@ -132,7 +132,7 @@ namespace Walterlv.WeakEvents
         /// </returns>
         public bool Invoke(TSender sender, TArgs e)
         {
-            List<Action<TSender, TArgs>> invokingHandlers = null;
+            List<Action<TSender, TArgs>>? invokingHandlers = null;
             lock (_locker)
             {
                 var weakEventHandlerList = _relatedInstances.ConvertAll(x =>
@@ -150,7 +150,7 @@ namespace Walterlv.WeakEvents
                 if (anyHandlerAlive)
                 {
                     // 如果依然存活，则引发事件（无论是否还剩余订阅，这可以与一般事件行为保持一致）。
-                    invokingHandlers = weakEventHandlerList.Where(x => x != null).SelectMany(x => x.GetInvokingHandlers()).ToList();
+                    invokingHandlers = weakEventHandlerList.OfType<WeakEventHandler>().SelectMany(x => x.GetInvokingHandlers()).ToList();
                 }
                 else
                 {
@@ -240,7 +240,7 @@ namespace Walterlv.WeakEvents
             /// <summary>
             /// 获取此弱事件处理器关联的目标对象。
             /// </summary>
-            internal object Target { get; private set; }
+            internal object? Target { get; private set; }
 
             /// <summary>
             /// 获取此弱事件处理器关联的目标方法或方法组，以及所有基于此方法组转换而得的可以直接调用的委托。

@@ -100,11 +100,11 @@ namespace Walterlv
         /// <param name="version">当前安装的就地更新的最新版本号。</param>
         /// <param name="release">发行号。</param>
         /// <param name="sp">服务包号。</param>
-        private NdpInfo(string mainVersion, string releaseVersionName,
+        private NdpInfo(string mainVersion, string? releaseVersionName,
             string version, int release, int sp)
         {
             MainVersion = mainVersion;
-            ReleaseVersionName = releaseVersionName;
+            ReleaseVersionName = releaseVersionName ?? "";
             Version = version;
             Release = release;
             SP = sp;
@@ -177,8 +177,9 @@ namespace Walterlv
         /// <summary>
         /// 获取 .NET Framework 4.x 就地更新的最新版本号。
         /// 例如：4.6，4.7.1。
+        /// 如果没有安装任何版本的 .NET Framework，则返回 null。
         /// </summary>
-        public static string GetCurrentVersionName()
+        public static string? GetCurrentVersionName()
         {
             var dictionary = ReadFromRegistry();
             if (!dictionary.Any())
@@ -231,10 +232,8 @@ namespace Walterlv
         {
             using (var localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
             {
-                using (var ndpKey = localMachine.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\"))
-                {
-                    return ReadCore(ndpKey);
-                }
+                using var ndpKey = localMachine.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\");
+                return ReadCore(ndpKey);
             }
 
             Dictionary<string, NdpInfo> ReadCore(RegistryKey ndpKey)
