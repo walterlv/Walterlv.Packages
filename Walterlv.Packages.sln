@@ -40,7 +40,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.Environment", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.Win32", "src\Utils\Walterlv.Win32\Walterlv.Win32.csproj", "{5DECED0E-5B78-47D3-94F2-DC43526C9F93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.IO.PackageManagement", "src\Utils\Walterlv.IO.PackageManagement\Walterlv.IO.PackageManagement.csproj", "{288E146D-5125-4110-BB4F-3FA28CEED702}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.IO.PackageManagement", "src\Utils\Walterlv.IO.PackageManagement\Walterlv.IO.PackageManagement.csproj", "{288E146D-5125-4110-BB4F-3FA28CEED702}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Logger", "src\Utils\Walterlv.Logger\Walterlv.Logger.csproj", "{030C3AF4-F48F-47FD-904B-032333861C1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +94,10 @@ Global
 		{288E146D-5125-4110-BB4F-3FA28CEED702}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{288E146D-5125-4110-BB4F-3FA28CEED702}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{288E146D-5125-4110-BB4F-3FA28CEED702}.Release|Any CPU.Build.0 = Release|Any CPU
+		{030C3AF4-F48F-47FD-904B-032333861C1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{030C3AF4-F48F-47FD-904B-032333861C1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{030C3AF4-F48F-47FD-904B-032333861C1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{030C3AF4-F48F-47FD-904B-032333861C1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
