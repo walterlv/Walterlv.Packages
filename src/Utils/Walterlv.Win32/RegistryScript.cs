@@ -186,19 +186,25 @@ namespace Walterlv.Win32
                 throw new ArgumentNullException(nameof(value));
             }
 
-            RegistryKey subKey;
+            RegistryKey? subKey;
             try
             {
-                subKey = rootKey.OpenSubKey(path, writable: true);
+                subKey = rootKey.OpenSubKey(path, writable: true)
+                    ?? rootKey.CreateSubKey(path, RegistryKeyPermissionCheck.ReadWriteSubTree);
             }
             catch (SecurityException)
             {
                 return false;
             }
 
+            if (subKey is null)
+            {
+                return false;
+            }
+
             try
             {
-                subKey?.SetValue(key, value);
+                subKey.SetValue(key, value);
             }
             catch (UnauthorizedAccessException)
             {
