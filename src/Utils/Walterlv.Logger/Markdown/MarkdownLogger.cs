@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 
 namespace Walterlv.Logging.Markdown
 {
@@ -195,15 +196,15 @@ namespace Walterlv.Logging.Markdown
             {
                 directory.Create();
             }
-            using var writer = new StreamWriter(file.FullName, append, Encoding.UTF8)
+            var writer = new Lazy<StreamWriter>(() => new StreamWriter(file.FullName, append, Encoding.UTF8)
             {
                 AutoFlush = true,
                 NewLine = _lineEnd,
-            };
+            }, LazyThreadSafetyMode.ExecutionAndPublication);
             while (true)
             {
                 var text = await logQueue.DequeueAsync().ConfigureAwait(false);
-                writer.WriteLine(text);
+                writer.Value.WriteLine(text);
             }
         }
 
