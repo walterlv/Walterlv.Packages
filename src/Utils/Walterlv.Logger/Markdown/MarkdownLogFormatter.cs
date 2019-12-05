@@ -109,6 +109,11 @@ namespace Walterlv.Logging.Markdown
         /// <returns>Markdown 格式的表格。</returns>
         private static string MakeTable<T>(IReadOnlyList<T> items, IDictionary<string, Func<T, string>> columnFormatter) where T : notnull
         {
+            if (items.Count <= 0)
+            {
+                return "";
+            }
+
             var builder = new StringBuilder();
             // 列数。
             var columnCount = columnFormatter.Count;
