@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Walterlv.Logging.Markdown
 {
@@ -196,15 +197,52 @@ namespace Walterlv.Logging.Markdown
             {
                 directory.Create();
             }
-            var writer = new Lazy<StreamWriter>(() => new StreamWriter(file.FullName, append, Encoding.UTF8)
-            {
-                AutoFlush = true,
-                NewLine = _lineEnd,
-            }, LazyThreadSafetyMode.ExecutionAndPublication);
+            var writerLazy = CreateWriterLazy(file, append);
             while (true)
             {
                 var text = await logQueue.DequeueAsync().ConfigureAwait(false);
-                writer.Value.WriteLine(text);
+                var writer = await writerLazy.Value.ConfigureAwait(false);
+                if (writer == null)
+                {
+                    writerLazy = CreateWriterLazy(file, append);
+                }
+                else
+                {
+                    await writer.WriteLineAsync(text).ConfigureAwait(false);
+                }
+            }
+        }
+
+        private Lazy<Task<StreamWriter?>> CreateWriterLazy(FileInfo file, bool append)
+        {
+            return new Lazy<Task<StreamWriter?>>(() => CreateWriterCore(), LazyThreadSafetyMode.ExecutionAndPublication);
+            async Task<StreamWriter?> CreateWriterCore()
+            {
+                for (var i = 0; i < 10; i++)
+                {
+                    try
+                    {
+                        return new StreamWriter(file.FullName, append, Encoding.UTF8)
+                        {
+                            AutoFlush = true,
+                            NewLine = _lineEnd,
+                        };
+                    }
+                    catch (IOException)
+                    {
+                        // 当出现了 IO 错误，通常还有恢复的可能，所以重试。
+                        await Task.Delay(1000).ConfigureAwait(false);
+                        continue;
+                    }
+                    catch (Exception)
+                    {
+                        // 当出现了其他错误，恢复的可能性比较低，所以重试更少次数，更长时间。
+                        await Task.Delay(5000).ConfigureAwait(false);
+                        i++;
+                        continue;
+                    }
+                }
+                return null;
             }
         }
 
