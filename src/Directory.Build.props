@@ -5,7 +5,7 @@
     <WarningsAsErrors>$(WarningsAsErrors);CS8600;CS8601;CS8602;CS8603;CS8604;CS8609;CS8610;CS8616;CS8618;CS8619;CS8622;CS8625</WarningsAsErrors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>$(MSBuildThisFileDirectory)..\bin\$(Configuration)</PackageOutputPath>
-    <Version>0.13.3-alpha</Version>
+    <Version>0.14.0-alpha</Version>
     <Authors>walterlv</Authors>
     <Company>walterlv</Company>
     <Product>Walterlv.Packages</Product>
