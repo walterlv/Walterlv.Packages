@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Walterlv.IO.PackageManagement
 {
-    public class IOResult : ILogger
+    public class IOResult
     {
         private readonly List<string> _logs = new List<string>();
         private bool _isSuccess = true;
@@ -27,11 +27,5 @@ namespace Walterlv.IO.PackageManagement
             }
             _logs.AddRange(otherResult._logs);
         }
-    }
-
-    public interface ILogger
-    {
-        void Fail(Exception ex);
-        void Log(string message);
     }
 }
