@@ -44,7 +44,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.IO.PackageManageme
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.Logger", "src\Utils\Walterlv.Logger\Walterlv.Logger.csproj", "{030C3AF4-F48F-47FD-904B-032333861C1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.NullableAttributes", "src\Diagnostics\Walterlv.NullableAttributes\Walterlv.NullableAttributes.csproj", "{425F8A12-9029-4187-8691-75CAD92B09FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.NullableAttributes", "src\Diagnostics\Walterlv.NullableAttributes\Walterlv.NullableAttributes.csproj", "{425F8A12-9029-4187-8691-75CAD92B09FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Web", "src\Utils\Walterlv.Web\Walterlv.Web.csproj", "{69B3B7FB-8F32-454D-AF34-A0526C8B5650}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,6 +106,10 @@ Global
 		{425F8A12-9029-4187-8691-75CAD92B09FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{425F8A12-9029-4187-8691-75CAD92B09FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{425F8A12-9029-4187-8691-75CAD92B09FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69B3B7FB-8F32-454D-AF34-A0526C8B5650}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69B3B7FB-8F32-454D-AF34-A0526C8B5650}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69B3B7FB-8F32-454D-AF34-A0526C8B5650}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69B3B7FB-8F32-454D-AF34-A0526C8B5650}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
