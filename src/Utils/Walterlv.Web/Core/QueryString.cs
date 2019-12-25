@@ -8,7 +8,7 @@ namespace Walterlv.Web.Core
 {
     internal class QueryString
     {
-        [return: NotNullIfNotNull("query")]
+        //[return: NotNullIfNotNull("query")]
         public static string? Serialize(object? query, string? prefix = "?")
         {
             if (query is null)
