@@ -17,13 +17,13 @@ namespace Walterlv.Web.Core
             }
 
             var isContractedType = query.GetType().IsDefined(typeof(DataContractAttribute));
-            var properties = from p in query.GetType().GetProperties()
-                             where isContractedType ? p.IsDefined(typeof(DataMemberAttribute)) : true
-                             let memberName = isContractedType ? p.GetCustomAttribute<DataMemberAttribute>().Name : p.Name
-                             let value = p.GetValue(query, null)
+            var properties = from property in query.GetType().GetProperties()
+                             where property.CanRead && (isContractedType ? property.IsDefined(typeof(DataMemberAttribute)) : true)
+                             let memberName = isContractedType ? property.GetCustomAttribute<DataMemberAttribute>().Name : property.Name
+                             let value = property.GetValue(query, null)
                              where value != null && !string.IsNullOrWhiteSpace(value.ToString())
                              select memberName + "=" + HttpUtility.UrlEncode(value.ToString());
-            var queryString = string.Join("&", properties.ToArray());
+            var queryString = string.Join("&", properties);
             return string.IsNullOrWhiteSpace(queryString) ? "" : prefix + queryString;
         }
     }
