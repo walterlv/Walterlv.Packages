@@ -18,7 +18,7 @@
         /// <summary>
         /// 表示仅记录错误、异常和崩溃。
         /// </summary>
-        ErrorAndFatal = 0x02,
+        Error = 0x02,
 
         /// <summary>
         /// 表示仅记录警告、错误、异常和崩溃。

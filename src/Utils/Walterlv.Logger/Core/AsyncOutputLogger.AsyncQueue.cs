@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Walterlv.Logging.Markdown
+namespace Walterlv.Logging.Core
 {
-    public sealed partial class MarkdownLogger : ILogger
+    partial class AsyncOutputLogger
     {
         private class AsyncQueue<T>
         {

@@ -1,21 +1,23 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
+using Walterlv.Logging.Core;
 
 namespace Walterlv.Logging.Markdown
 {
     /// <summary>
     /// 提供 Markdown 格式的日志记录。
     /// </summary>
-    public sealed partial class MarkdownLogger : ILogger
+    public sealed class MarkdownLogger : AsyncOutputLogger
     {
-        private readonly AsyncQueue<string> _infoQueue;
-        private readonly AsyncQueue<string>? _errorQueue;
         private readonly string _lineEnd;
+        private readonly FileInfo _infoLogFile;
+        private readonly FileInfo _errorLogFile;
+        private readonly bool _append;
+        private StreamWriter? _infoWriter;
+        private StreamWriter? _errorWriter;
 
         /// <summary>
         /// 创建 Markdown 格式的日志记录实例。
@@ -30,9 +32,10 @@ namespace Walterlv.Logging.Markdown
                 throw new ArgumentNullException(nameof(logFile));
             }
 
+            _infoLogFile = logFile;
+            _errorLogFile = logFile;
             _lineEnd = VerifyLineEnd(lineEnd);
-            _infoQueue = new AsyncQueue<string>();
-            StartWriteLogFile(logFile, _infoQueue, append);
+            _append = append;
         }
 
         /// <summary>
@@ -56,194 +59,65 @@ namespace Walterlv.Logging.Markdown
             }
 
             _lineEnd = VerifyLineEnd(lineEnd);
-            _infoQueue = new AsyncQueue<string>();
-            _errorQueue = new AsyncQueue<string>();
-            StartWriteLogFile(infoLogFile, _infoQueue, append);
-            StartWriteLogFile(errorLogFile, _errorQueue, append);
+            _infoLogFile = infoLogFile;
+            _errorLogFile = errorLogFile;
+            _append = append;
         }
 
-        /// <summary>
-        /// 获取当前时间的格式化字符串。
-        /// </summary>
-        private string Now => DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-
-        /// <summary>
-        /// 获取或设置日志的记录等级。
-        /// 你可以在日志记录的过程当中随时修改日志等级，修改后会立刻生效。
-        /// 默认是所有调用日志记录的方法都全部记录。
-        /// </summary>
-        public LogLevel Level { get; set; } = LogLevel.Detail;
-
-        /// <inheritdoc />
-        public void Trace(string text, [CallerMemberName] string? callerMemberName = null)
+        protected override async Task OnInitializedAsync()
         {
-            if (Level < LogLevel.Detail)
-            {
-                return;
-            }
-
-            _infoQueue.Enqueue($"[{Now}][{callerMemberName}] {text}");
+            _infoWriter = await CreateWriterAsync(_infoLogFile).ConfigureAwait(false);
+            _errorWriter = _errorLogFile == _infoLogFile
+                ? _infoWriter
+                : await CreateWriterAsync(_errorLogFile).ConfigureAwait(false);
         }
 
-        /// <inheritdoc />
-        public void Message(string text, [CallerMemberName] string? callerMemberName = null)
+        protected override void OnLogReceived(in Context context)
         {
-            if (Level < LogLevel.Message)
+            if (context.ExtraInfo != null && context.CurrentLevel > LogLevel.Error)
             {
-                return;
-            }
-
-            _infoQueue.Enqueue($"[{Now}][{callerMemberName}] {text}");
-        }
-
-        /// <inheritdoc />
-        public void Warning(string message, [CallerMemberName] string? callerMemberName = null)
-        {
-            if (Level < LogLevel.Warning)
-            {
-                return;
-            }
-
-            _infoQueue.Enqueue($"[{Now}][{callerMemberName}] **{message}**");
-        }
-
-        /// <inheritdoc />
-        public void Error(string message, [CallerMemberName] string? callerMemberName = null)
-        {
-            if (Level < LogLevel.ErrorAndFatal)
-            {
-                return;
-            }
-
-            if (_errorQueue is null)
-            {
-                // 如果使用单个日志文件，则将日志作为警告级别输出。
-                _infoQueue.Enqueue($@"[{Now}][{callerMemberName}] **{message}**");
+                _infoWriter?.WriteLine(context.BuildLogText(containsExtraInfo: false));
+                _errorWriter?.WriteLine(context.BuildLogText(extraInfoFormatIfNotFormatted: "```csharp\n{0}\n```"));
             }
             else
             {
-                // 如果使用多个日志文件，则在信息文件和错误文件中都以警告级别输出。
-                _infoQueue.Enqueue($"[{Now}][{callerMemberName}] **{message}**");
-                _errorQueue.Enqueue($@"[{Now}][{callerMemberName}] **{message}**");
+                _infoWriter?.WriteLine(context.BuildLogText());
             }
         }
 
-        /// <inheritdoc />
-        public void Error(Exception exception, string? message = null, [CallerMemberName] string? callerMemberName = null)
-        {
-            if (Level < LogLevel.ErrorAndFatal)
-            {
-                return;
-            }
-
-            if (_errorQueue is null)
-            {
-                // 如果使用单个日志文件，则将异常信息与常规日志放到一起。
-                _infoQueue.Enqueue($@"[{Now}][{callerMemberName}] **{message}**
-```csharp
-{exception.ToString()}
-```");
-            }
-            else
-            {
-                // 如果使用多个日志文件，则在信息文件中简单输出发生了异常，在错误文件中输出异常的详细信息。
-                _infoQueue.Enqueue($"[{Now}][{callerMemberName}] **{message}** *请参见错误日志*");
-                _errorQueue.Enqueue($@"[{Now}][{callerMemberName}] **{message}**
-```csharp
-{exception.ToString()}
-```
-");
-            }
-        }
-
-        /// <inheritdoc />
-        public void Fatal(Exception exception, string message, [CallerMemberName] string? callerMemberName = null)
-        {
-            if (Level < LogLevel.Fatal)
-            {
-                return;
-            }
-
-            if (_errorQueue is null)
-            {
-                // 如果使用单个日志文件，则将崩溃信息与常规日志放到一起。
-                _infoQueue.Enqueue($@"[{Now}][{callerMemberName}] **{message}** *致命错误，异常中止*
-```csharp
-{exception.ToString()}
-```");
-            }
-            else
-            {
-                // 如果使用多个日志文件，则在信息文件中简单输出崩溃，在错误文件中输出崩溃的详细信息。
-                _infoQueue.Enqueue($"[{Now}][{callerMemberName}] **{message}** *致命性错误，异常中止，请参见错误日志*");
-                _errorQueue.Enqueue($@"[{Now}][{callerMemberName}] **{message}** *致命错误，异常中止*
-```csharp
-{exception.ToString()}
-```
-");
-            }
-        }
-
-        /// <summary>
-        /// 开始异步写入日志文件。
-        /// </summary>
-        /// <param name="file">日志文件。</param>
-        /// <param name="logQueue">要接收日志的异步队列。</param>
-        /// <param name="append">是追加文件还是覆盖文件。</param>
-        private async void StartWriteLogFile(FileInfo file, AsyncQueue<string> logQueue, bool append)
+        private async Task<StreamWriter?> CreateWriterAsync(FileInfo file)
         {
             var directory = file.Directory;
             if (directory != null && !Directory.Exists(directory.FullName))
             {
                 directory.Create();
             }
-            var writerLazy = CreateWriterLazy(file, append);
-            while (true)
-            {
-                var text = await logQueue.DequeueAsync().ConfigureAwait(false);
-                var writer = await writerLazy.Value.ConfigureAwait(false);
-                if (writer == null)
-                {
-                    writerLazy = CreateWriterLazy(file, append);
-                }
-                else
-                {
-                    await writer.WriteLineAsync(text).ConfigureAwait(false);
-                }
-            }
-        }
 
-        private Lazy<Task<StreamWriter?>> CreateWriterLazy(FileInfo file, bool append)
-        {
-            return new Lazy<Task<StreamWriter?>>(() => CreateWriterCore(), LazyThreadSafetyMode.ExecutionAndPublication);
-            async Task<StreamWriter?> CreateWriterCore()
+            for (var i = 0; i < 10; i++)
             {
-                for (var i = 0; i < 10; i++)
+                try
                 {
-                    try
+                    return new StreamWriter(file.FullName, _append, Encoding.UTF8)
                     {
-                        return new StreamWriter(file.FullName, append, Encoding.UTF8)
-                        {
-                            AutoFlush = true,
-                            NewLine = _lineEnd,
-                        };
-                    }
-                    catch (IOException)
-                    {
-                        // 当出现了 IO 错误，通常还有恢复的可能，所以重试。
-                        await Task.Delay(1000).ConfigureAwait(false);
-                        continue;
-                    }
-                    catch (Exception)
-                    {
-                        // 当出现了其他错误，恢复的可能性比较低，所以重试更少次数，更长时间。
-                        await Task.Delay(5000).ConfigureAwait(false);
-                        i++;
-                        continue;
-                    }
+                        AutoFlush = true,
+                        NewLine = _lineEnd,
+                    };
                 }
-                return null;
+                catch (IOException)
+                {
+                    // 当出现了 IO 错误，通常还有恢复的可能，所以重试。
+                    await Task.Delay(1000).ConfigureAwait(false);
+                    continue;
+                }
+                catch (Exception)
+                {
+                    // 当出现了其他错误，恢复的可能性比较低，所以重试更少次数，更长时间。
+                    await Task.Delay(5000).ConfigureAwait(false);
+                    i++;
+                    continue;
+                }
             }
+            return null;
         }
 
         /// <summary>
@@ -251,6 +125,7 @@ namespace Walterlv.Logging.Markdown
         /// </summary>
         /// <param name="lineEnd">行尾符号。</param>
         /// <returns>行尾符号。</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string VerifyLineEnd(string lineEnd) => lineEnd switch
         {
             null => throw new ArgumentNullException(nameof(lineEnd)),
