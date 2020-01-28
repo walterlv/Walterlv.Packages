@@ -3,6 +3,9 @@ using System.Runtime.CompilerServices;
 
 namespace Walterlv.Logging
 {
+    /// <summary>
+    /// 提供记录日志的方法。
+    /// </summary>
     public interface ILogger
     {
         /// <summary>

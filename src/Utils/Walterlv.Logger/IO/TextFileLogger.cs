@@ -8,6 +8,9 @@ using Walterlv.Logging.Core;
 
 namespace Walterlv.Logging.IO
 {
+    /// <summary>
+    /// 提供记录到文本文件的日志。
+    /// </summary>
     public class TextFileLogger : AsyncOutputLogger
     {
         private readonly string _lineEnd;
@@ -68,6 +71,7 @@ namespace Walterlv.Logging.IO
             _isErrorAppended = isErrorAppended;
         }
 
+        /// <inheritdoc />
         protected override async Task OnInitializedAsync()
         {
             _infoWriter = await CreateWriterAsync(_infoLogFile).ConfigureAwait(false);
@@ -76,6 +80,7 @@ namespace Walterlv.Logging.IO
                 : await CreateWriterAsync(_errorLogFile).ConfigureAwait(false);
         }
 
+        /// <inheritdoc />
         protected sealed override void OnLogReceived(in Context context)
         {
             var areSameFile = _infoWriter == _errorWriter;
@@ -93,6 +98,13 @@ namespace Walterlv.Logging.IO
             }
         }
 
+        /// <summary>
+        /// 派生类重写此方法时，将单条日志格式化成一端可被记录到文件的字符串。
+        /// </summary>
+        /// <param name="context">单条日志信息。</param>
+        /// <param name="containsExtraInfo">此次格式化时，是否应该包含额外的日志信息。</param>
+        /// <param name="lineEnd">记录到文件时应该使用的行尾符号。</param>
+        /// <returns>格式化后的日志文本。</returns>
         protected virtual string BuildLogText(in Context context, bool containsExtraInfo, string lineEnd)
         {
             var time = context.Time.ToLocalTime().ToString("yyyy.MM.dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
@@ -108,6 +120,11 @@ namespace Walterlv.Logging.IO
                 : $@"[{time}][{member}] {text}{lineEnd}{extraInfo}";
         }
 
+        /// <summary>
+        /// 创建写入到日志的流。
+        /// </summary>
+        /// <param name="file">日志文件。</param>
+        /// <returns>可等待的实例。</returns>
         private async Task<StreamWriter?> CreateWriterAsync(FileInfo file)
         {
             var directory = file.Directory;

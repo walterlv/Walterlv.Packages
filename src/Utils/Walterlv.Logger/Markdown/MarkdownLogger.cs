@@ -36,6 +36,7 @@ namespace Walterlv.Logging.Markdown
         {
         }
 
+        /// <inheritdoc />
         protected override string BuildLogText(in Context context, bool containsExtraInfo, string lineEnd)
         {
             var time = context.Time.ToLocalTime().ToString("yyyy.MM.dd HH:mm:ss.fff", CultureInfo.InvariantCulture);

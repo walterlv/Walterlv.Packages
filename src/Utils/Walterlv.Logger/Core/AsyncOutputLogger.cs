@@ -58,6 +58,13 @@ namespace Walterlv.Logging.Core
         public void Fatal(Exception exception, string? text, [CallerMemberName] string? callerMemberName = null)
             => LogCore(text, LogLevel.Error, exception.ToString(), callerMemberName);
 
+        /// <summary>
+        /// 使用底层的日志记录方法来异步记录日志。
+        /// </summary>
+        /// <param name="text">要记录的日志的文本。</param>
+        /// <param name="currentLevel">要记录的当条日志等级。</param>
+        /// <param name="extraInfo">如果此条日志包含额外的信息，则在此传入额外的信息。</param>
+        /// <param name="callerMemberName">此参数由编译器自动生成，请勿传入。</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void LogCore(string? text, LogLevel currentLevel,
             string? extraInfo, [CallerMemberName] string? callerMemberName = null)
@@ -80,6 +87,10 @@ namespace Walterlv.Logging.Core
             _queue.Enqueue(new Context(DateTimeOffset.Now, callerMemberName, text ?? "", extraInfo, currentLevel));
         }
 
+        /// <summary>
+        /// 使用底层的日志记录方法来异步记录日志。
+        /// </summary>
+        /// <param name="context">当条日志上下文。</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal void LogCore(in Context context)
         {

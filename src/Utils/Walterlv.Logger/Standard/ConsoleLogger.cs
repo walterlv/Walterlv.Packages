@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Walterlv.Logging.Core;
 
 namespace Walterlv.Logging.Standard
 {
+    /// <summary>
+    /// 提供向控制台输出日志的方法。
+    /// </summary>
     public sealed class ConsoleLogger : AsyncOutputLogger
     {
         private DateTimeOffset _lastTime;
