@@ -11,7 +11,7 @@ namespace Walterlv.Logging.IO
     /// <summary>
     /// 提供记录到文本文件的日志。
     /// </summary>
-    public class TextFileLogger : AsyncOutputLogger
+    public class TextFileLogger : AsyncOutputLogger, IDisposable
     {
         private readonly string _lineEnd;
         private readonly FileInfo _infoLogFile;
@@ -74,15 +74,25 @@ namespace Walterlv.Logging.IO
         /// <inheritdoc />
         protected override async Task OnInitializedAsync()
         {
-            _infoWriter = await CreateWriterAsync(_infoLogFile).ConfigureAwait(false);
+            if (_isDisposed)
+            {
+                return;
+            }
+
+            _infoWriter = await CreateWriterAsync(_infoLogFile, _isInfoAppended).ConfigureAwait(false);
             _errorWriter = _errorLogFile == _infoLogFile
                 ? _infoWriter
-                : await CreateWriterAsync(_errorLogFile).ConfigureAwait(false);
+                : await CreateWriterAsync(_errorLogFile, _isErrorAppended).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         protected sealed override void OnLogReceived(in Context context)
         {
+            if (_isDisposed)
+            {
+                return;
+            }
+
             var areSameFile = _infoWriter == _errorWriter;
             if (!areSameFile && context.CurrentLevel > LogLevel.Error)
             {
@@ -124,8 +134,9 @@ namespace Walterlv.Logging.IO
         /// 创建写入到日志的流。
         /// </summary>
         /// <param name="file">日志文件。</param>
+        /// <param name="append">是追加到文件还是直接覆盖文件。</param>
         /// <returns>可等待的实例。</returns>
-        private async Task<StreamWriter?> CreateWriterAsync(FileInfo file)
+        private async Task<StreamWriter?> CreateWriterAsync(FileInfo file, bool append)
         {
             var directory = file.Directory;
             if (directory != null && !Directory.Exists(directory.FullName))
@@ -135,9 +146,19 @@ namespace Walterlv.Logging.IO
 
             for (var i = 0; i < 10; i++)
             {
+                if (_isDisposed)
+                {
+                    return null;
+                }
+
                 try
                 {
-                    return new StreamWriter(file.FullName, _isInfoAppended, Encoding.UTF8)
+                    var fileStream = File.Open(
+                        file.FullName,
+                        append ? FileMode.Append : FileMode.Create,
+                        FileAccess.Write,
+                        FileShare.Read);
+                    return new StreamWriter(fileStream, Encoding.UTF8)
                     {
                         AutoFlush = true,
                         NewLine = _lineEnd,
@@ -174,5 +195,25 @@ namespace Walterlv.Logging.IO
             "\r\n" => "\r\n",
             _ => throw new ArgumentException("虽然你可以指定行尾符号，但也只能是 \\n、\\r 或者 \\r\\n。", nameof(lineEnd))
         };
+
+        private bool _isDisposed = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    (_infoWriter?.BaseStream as FileStream)?.Dispose();
+                    (_errorWriter?.BaseStream as FileStream)?.Dispose();
+                }
+
+                _isDisposed = true;
+            }
+        }
+
+        public void Dispose() => Dispose(true);
+
+        public void Close() => Dispose(true);
     }
 }
