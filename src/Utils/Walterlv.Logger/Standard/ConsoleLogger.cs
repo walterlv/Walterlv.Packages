@@ -22,7 +22,7 @@ namespace Walterlv.Logging.Standard
             _lastTime = currentTime;
             if (isNewDay)
             {
-                Console.WriteLine($"[{currentTime.Date.ToString("yyyy.MM.dd", CultureInfo.InvariantCulture)}]".PadRight(Console.BufferWidth, '─'));
+                Console.WriteLine($"[{currentTime.Date.ToString("yyyy.MM.dd", CultureInfo.InvariantCulture)}]".PadRight(Console.BufferWidth - 2, '─'));
             }
 
             // 输出当前时间。

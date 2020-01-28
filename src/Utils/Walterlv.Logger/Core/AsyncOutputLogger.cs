@@ -36,32 +36,31 @@ namespace Walterlv.Logging.Core
 
         /// <inheritdoc />
         public void Trace(string? text, [CallerMemberName] string? callerMemberName = null)
-            => LogCore(text, LogLevel.Detail, null, false, callerMemberName);
+            => LogCore(text, LogLevel.Detail, null, callerMemberName);
 
         /// <inheritdoc />
         public void Message(string? text, [CallerMemberName] string? callerMemberName = null)
-            => LogCore(text, LogLevel.Message, null, false, callerMemberName);
+            => LogCore(text, LogLevel.Message, null, callerMemberName);
 
         /// <inheritdoc />
         public void Warning(string? text, [CallerMemberName] string? callerMemberName = null)
-            => LogCore(text, LogLevel.Warning, null, false, callerMemberName);
+            => LogCore(text, LogLevel.Warning, null, callerMemberName);
 
         /// <inheritdoc />
         public void Error(string? text, [CallerMemberName] string? callerMemberName = null)
-            => LogCore(text, LogLevel.Error, null, false, callerMemberName);
+            => LogCore(text, LogLevel.Error, null, callerMemberName);
 
         /// <inheritdoc />
         public void Error(Exception exception, string? text = null, [CallerMemberName] string? callerMemberName = null)
-            => LogCore(text, LogLevel.Error, exception.ToString(), false, callerMemberName);
+            => LogCore(text, LogLevel.Error, exception.ToString(), callerMemberName);
 
         /// <inheritdoc />
         public void Fatal(Exception exception, string? text, [CallerMemberName] string? callerMemberName = null)
-            => LogCore(text, LogLevel.Error, exception.ToString(), false, callerMemberName);
+            => LogCore(text, LogLevel.Error, exception.ToString(), callerMemberName);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void LogCore(string? text, LogLevel currentLevel,
-            string? extraInfo, bool isExtraInfoSelfFormatted,
-            [CallerMemberName] string? callerMemberName = null)
+            string? extraInfo, [CallerMemberName] string? callerMemberName = null)
         {
             if (callerMemberName is null)
             {
@@ -78,7 +77,7 @@ namespace Walterlv.Logging.Core
                 return;
             }
 
-            _queue.Enqueue(new Context(DateTimeOffset.Now, callerMemberName, text ?? "", extraInfo, isExtraInfoSelfFormatted, currentLevel));
+            _queue.Enqueue(new Context(DateTimeOffset.Now, callerMemberName, text ?? "", extraInfo, currentLevel));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

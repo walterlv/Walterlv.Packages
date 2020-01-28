@@ -1,24 +1,60 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Walterlv.Logging.Core;
 
 namespace Walterlv.Logging.Composition
 {
-    public class CompositeLogger : AsyncOutputLogger, ICollection<ILogger>
+    public class CompositeLogger : AsyncOutputLogger, ICollection<AsyncOutputLogger>, IEnumerable<ILogger>
     {
         private readonly object _locker = new object();
-        private readonly List<ILogger> _loggers = new List<ILogger>();
+        private readonly List<AsyncOutputLogger> _loggers = new List<AsyncOutputLogger>();
+        private LogLevel _level = LogLevel.Message;
+
+        public CompositeLogger()
+        {
+        }
+
+        public CompositeLogger(params AsyncOutputLogger[] loggers)
+        {
+            if (loggers is null)
+            {
+                throw new ArgumentNullException(nameof(loggers));
+            }
+
+            _loggers = loggers.ToList();
+        }
+
+        public override LogLevel Level
+        {
+            get => _level;
+            set
+            {
+                _level = value;
+                foreach (var logger in _loggers)
+                {
+                    logger.Level = value;
+                }
+            }
+        }
+
+        protected override Task OnInitializedAsync() => Task.FromResult<object?>(null);
+
+        protected override void OnLogReceived(in Context context)
+        {
+            foreach (var logger in _loggers)
+            {
+                logger.LogCore(in context);
+            }
+        }
 
         public int Count => _loggers.Count;
 
-        public bool Contains(ILogger logger) => _loggers.Contains(logger);
+        public bool Contains(AsyncOutputLogger logger) => _loggers.Contains(logger);
 
-        public void Add(ILogger logger)
+        public void Add(AsyncOutputLogger logger)
         {
             lock (_locker)
             {
@@ -26,7 +62,7 @@ namespace Walterlv.Logging.Composition
             }
         }
 
-        public bool Remove(ILogger logger)
+        public bool Remove(AsyncOutputLogger logger)
         {
             lock (_locker)
             {
@@ -42,34 +78,14 @@ namespace Walterlv.Logging.Composition
             }
         }
 
-        bool ICollection<ILogger>.IsReadOnly => false;
+        bool ICollection<AsyncOutputLogger>.IsReadOnly => false;
 
-        public IEnumerator<ILogger> GetEnumerator() => _loggers.GetEnumerator();
+        public IEnumerator<AsyncOutputLogger> GetEnumerator() => _loggers.GetEnumerator();
+
+        IEnumerator<ILogger> IEnumerable<ILogger>.GetEnumerator() => _loggers.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => _loggers.GetEnumerator();
 
-        void ICollection<ILogger>.CopyTo(ILogger[] array, int arrayIndex) => _loggers.CopyTo(array, arrayIndex);
-
-        protected override Task OnInitializedAsync() => Task.FromResult<object?>(null);
-
-        protected override void OnLogReceived(in Context context)
-        {
-            foreach (var logger in _loggers)
-            {
-                if (logger is AsyncOutputLogger asyncLogger)
-                {
-                    asyncLogger.LogCore(in context);
-                }
-                else
-                {
-                    LogForGenericLogger(in context);
-                }
-            }
-        }
-
-        private void LogForGenericLogger(in Context context)
-        {
-
-        }
+        void ICollection<AsyncOutputLogger>.CopyTo(AsyncOutputLogger[] array, int arrayIndex) => _loggers.CopyTo(array, arrayIndex);
     }
 }
