@@ -51,7 +51,7 @@ namespace Walterlv.Logging.IO
         /// <param name="isErrorAppended">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
         /// <param name="lineEnd">行尾符号。默认是 \n，如果你愿意，也可以改为 \r\n 或者 \r。</param>
         public TextFileLogger(FileInfo infoLogFile, FileInfo errorLogFile,
-            bool isInfoAppended = false, bool isErrorAppended = false, string lineEnd = "\n")
+            bool isInfoAppended = false, bool isErrorAppended = true, string lineEnd = "\n")
         {
             if (infoLogFile is null)
             {
