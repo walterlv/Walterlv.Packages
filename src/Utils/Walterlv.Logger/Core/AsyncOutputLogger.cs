@@ -32,7 +32,7 @@ namespace Walterlv.Logging.Core
         /// 你可以在日志记录的过程当中随时修改日志等级，修改后会立刻生效。
         /// 默认是所有调用日志记录的方法都全部记录。
         /// </summary>
-        public LogLevel Level { get; set; } = LogLevel.Detail;
+        public virtual LogLevel Level { get; set; } = LogLevel.Message;
 
         /// <inheritdoc />
         public void Trace(string? text, [CallerMemberName] string? callerMemberName = null)
@@ -73,12 +73,28 @@ namespace Walterlv.Logging.Core
                 throw new ArgumentException("不允许显式将 CallerMemberName 指定成空字符串。", nameof(callerMemberName));
             }
 
-            if (Level < LogLevel.Detail)
+            if (Level < currentLevel)
             {
                 return;
             }
 
             _queue.Enqueue(new Context(DateTimeOffset.Now, callerMemberName, text ?? "", extraInfo, isExtraInfoSelfFormatted, currentLevel));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected internal void LogCore(in Context context)
+        {
+            if (string.IsNullOrWhiteSpace(context.CallerMemberName))
+            {
+                throw new ArgumentException("不允许显式将 CallerMemberName 指定成 null 或空字符串。", nameof(Context.CallerMemberName));
+            }
+
+            if (Level < context.CurrentLevel)
+            {
+                return;
+            }
+
+            _queue.Enqueue(context);
         }
 
         /// <summary>

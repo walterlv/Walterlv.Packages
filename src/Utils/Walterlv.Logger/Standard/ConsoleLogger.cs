@@ -8,14 +8,11 @@ using Walterlv.Logging.Core;
 
 namespace Walterlv.Logging.Standard
 {
-    public class ConsoleLogger : AsyncOutputLogger
+    public sealed class ConsoleLogger : AsyncOutputLogger
     {
         private DateTimeOffset _lastTime;
 
-        protected override Task OnInitializedAsync()
-        {
-            return Task.FromResult<object?>(null);
-        }
+        protected override Task OnInitializedAsync() => Task.FromResult<object?>(null);
 
         protected override void OnLogReceived(in Context context)
         {

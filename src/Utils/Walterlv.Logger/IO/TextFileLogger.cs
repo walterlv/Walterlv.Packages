@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -12,19 +13,18 @@ namespace Walterlv.Logging.IO
         private readonly string _lineEnd;
         private readonly FileInfo _infoLogFile;
         private readonly FileInfo _errorLogFile;
-        private readonly bool _append;
-        private readonly string? _extraInfoFormatIfNotFormatted;
+        private readonly bool _isInfoAppended;
+        private readonly bool _isErrorAppended;
         private StreamWriter? _infoWriter;
         private StreamWriter? _errorWriter;
 
         /// <summary>
-        /// 创建 Markdown 格式的日志记录实例。
+        /// 创建文本文件记录日志的 <see cref="TextFileLogger"/> 的新实例。
         /// </summary>
-        /// <param name="logFile">日志文件。如果你希望有 Markdown 的语法高亮，建议指定后缀为 .md。</param>
+        /// <param name="logFile">日志文件。</param>
         /// <param name="append">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
         /// <param name="lineEnd">行尾符号。默认是 \n，如果你愿意，也可以改为 \r\n 或者 \r。</param>
-        /// <param name="extraInfoFormatIfNotFormatted">如果日志包含额外信息，并且尚未指定格式化字符串，则使用此字符串格式化此额外信息。</param>
-        public TextFileLogger(FileInfo logFile, bool append = false, string lineEnd = "\n", string? extraInfoFormatIfNotFormatted = null)
+        public TextFileLogger(FileInfo logFile, bool append = false, string lineEnd = "\n")
         {
             if (logFile is null)
             {
@@ -34,20 +34,21 @@ namespace Walterlv.Logging.IO
             _infoLogFile = logFile;
             _errorLogFile = logFile;
             _lineEnd = VerifyLineEnd(lineEnd);
-            _append = append;
-            _extraInfoFormatIfNotFormatted = extraInfoFormatIfNotFormatted;
+            _isInfoAppended = append;
+            _isErrorAppended = append;
         }
 
         /// <summary>
-        /// 创建 Markdown 格式的日志记录实例。
-        /// 在记录的时候，信息/警告和错误是分开成两个文件的。其中信息和警告在同一个文件，警告高亮；错误在另一个文件。
+        /// 创建文本文件记录日志的 <see cref="TextFileLogger"/> 的新实例。
+        /// 在记录的时候，信息/警告和错误是分开成两个文件的。信息文件包含用于诊断的所有信息，而错误文件包含代码中无法预知的错误记录。
         /// </summary>
-        /// <param name="infoLogFile">信息和警告的日志文件。如果你希望有 Markdown 的语法高亮，建议指定后缀为 .md。</param>
-        /// <param name="errorLogFile">错误日志文件。如果你希望有 Markdown 的语法高亮，建议指定后缀为 .md。</param>
-        /// <param name="append">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
+        /// <param name="infoLogFile">信息和警告的日志文件。</param>
+        /// <param name="errorLogFile">错误日志文件。</param>
+        /// <param name="isInfoAppended">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
+        /// <param name="isErrorAppended">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
         /// <param name="lineEnd">行尾符号。默认是 \n，如果你愿意，也可以改为 \r\n 或者 \r。</param>
-        /// <param name="extraInfoFormatIfNotFormatted">如果日志包含额外信息，并且尚未指定格式化字符串，则使用此字符串格式化此额外信息。</param>
-        public TextFileLogger(FileInfo infoLogFile, FileInfo errorLogFile, bool append = false, string lineEnd = "\n", string? extraInfoFormatIfNotFormatted = null)
+        public TextFileLogger(FileInfo infoLogFile, FileInfo errorLogFile,
+            bool isInfoAppended = false, bool isErrorAppended = false, string lineEnd = "\n")
         {
             if (infoLogFile is null)
             {
@@ -60,10 +61,11 @@ namespace Walterlv.Logging.IO
             }
 
             _lineEnd = VerifyLineEnd(lineEnd);
+            var areSameFile = string.Equals(infoLogFile.FullName, errorLogFile.FullName, StringComparison.OrdinalIgnoreCase);
             _infoLogFile = infoLogFile;
-            _errorLogFile = errorLogFile;
-            _append = append;
-            _extraInfoFormatIfNotFormatted = extraInfoFormatIfNotFormatted;
+            _errorLogFile = areSameFile ? infoLogFile : errorLogFile;
+            _isInfoAppended = isInfoAppended;
+            _isErrorAppended = isErrorAppended;
         }
 
         protected override async Task OnInitializedAsync()
@@ -74,17 +76,36 @@ namespace Walterlv.Logging.IO
                 : await CreateWriterAsync(_errorLogFile).ConfigureAwait(false);
         }
 
-        protected override void OnLogReceived(in Context context)
+        protected sealed override void OnLogReceived(in Context context)
         {
-            if (context.ExtraInfo != null && context.CurrentLevel > LogLevel.Error)
+            var areSameFile = _infoWriter == _errorWriter;
+            if (!areSameFile && context.CurrentLevel > LogLevel.Error)
             {
-                _infoWriter?.WriteLine(context.BuildLogText(containsExtraInfo: false));
-                _errorWriter?.WriteLine(context.BuildLogText(extraInfoFormatIfNotFormatted: "```csharp\n{0}\n```"));
+                // 写入日志的主要部分。
+                _infoWriter?.WriteLine(BuildLogText(in context, containsExtraInfo: false, _lineEnd));
+
+                // 写入日志的扩展部分。
+                _errorWriter?.WriteLine(BuildLogText(in context, context.ExtraInfo != null, _lineEnd));
             }
             else
             {
-                _infoWriter?.WriteLine(context.BuildLogText());
+                _infoWriter?.WriteLine(BuildLogText(in context, context.ExtraInfo != null, _lineEnd));
             }
+        }
+
+        protected virtual string BuildLogText(in Context context, bool containsExtraInfo, string lineEnd)
+        {
+            var time = context.Time.ToLocalTime().ToString("yyyy.MM.dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+            var member = context.CallerMemberName;
+            var text = context.Text;
+            string? extraInfo = null;
+            if (containsExtraInfo && context.ExtraInfo != null)
+            {
+                extraInfo = context.ExtraInfo;
+            }
+            return extraInfo is null
+                ? $@"[{time}][{member}] {text}"
+                : $@"[{time}][{member}] {text}{lineEnd}{extraInfo}";
         }
 
         private async Task<StreamWriter?> CreateWriterAsync(FileInfo file)
@@ -99,7 +120,7 @@ namespace Walterlv.Logging.IO
             {
                 try
                 {
-                    return new StreamWriter(file.FullName, _append, Encoding.UTF8)
+                    return new StreamWriter(file.FullName, _isInfoAppended, Encoding.UTF8)
                     {
                         AutoFlush = true,
                         NewLine = _lineEnd,
