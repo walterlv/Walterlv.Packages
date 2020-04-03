@@ -54,7 +54,7 @@ namespace Walterlv.Windows.Effects
         /// <param name="value">设置的倾斜效果。</param>
         public static void SetTiltEffect(DependencyObject element, TiltEffect2D value)
         {
-            element.SetValue(IsEnabledProperty, value);
+            element.SetValue(TiltEffectProperty, value);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Walterlv.Windows.Effects
         /// <param name="element">要获取倾斜效果的元素。</param>
         public static TiltEffect2D GetTiltEffect(DependencyObject element)
         {
-            return (TiltEffect2D)element.GetValue(IsEnabledProperty);
+            return (TiltEffect2D)element.GetValue(TiltEffectProperty);
         }
 
         /// <summary>
