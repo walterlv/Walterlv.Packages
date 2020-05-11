@@ -6,19 +6,33 @@ using System.Text;
 
 namespace Walterlv.IO.PackageManagement
 {
+    /// <summary>
+    /// 提供基于目录联接的包版本管理方案。
+    /// </summary>
     public class VersionedPackageDirectory
     {
         private const string CurrentDirectoryName = "current";
         private readonly DirectoryInfo _rootDirectory;
 
+        /// <summary>
+        /// 将 <paramref name="rootDirectory"/> 路径改造成可进行包版本管理的文件夹。
+        /// </summary>
+        /// <param name="rootDirectory">要进行包版本管理的文件夹。</param>
         public VersionedPackageDirectory(string rootDirectory)
             : this(VerifyDirectoryArgument(rootDirectory, nameof(rootDirectory))) { }
 
+        /// <summary>
+        /// 将 <paramref name="rootDirectory"/> 路径改造成可进行包版本管理的文件夹。
+        /// </summary>
+        /// <param name="rootDirectory">要进行包版本管理的文件夹。</param>
         public VersionedPackageDirectory(DirectoryInfo rootDirectory)
         {
             _rootDirectory = rootDirectory ?? throw new ArgumentNullException(nameof(rootDirectory));
         }
 
+        /// <summary>
+        /// 获取正在被包版本管理的文件夹。
+        /// </summary>
         public string RootDirectory => _rootDirectory.FullName;
 
         /// <summary>
@@ -61,7 +75,7 @@ namespace Walterlv.IO.PackageManagement
         public void Move(DirectoryInfo sourceDirectory, string version)
         {
             var targetDirectory = GetVersionDirectory(version, false);
-            PackageDirectory.Move(sourceDirectory, targetDirectory);
+            PackageDirectory.Move(sourceDirectory, targetDirectory, DirectoryOverwriteStrategy.Overwrite);
         }
 
         /// <summary>
@@ -73,8 +87,8 @@ namespace Walterlv.IO.PackageManagement
         {
             var targetDirectory = GetVersionDirectory(version, false);
             var currentDirectory = GetVersionDirectory(CurrentDirectoryName, false);
-            PackageDirectory.Move(sourceDirectory, targetDirectory);
-            PackageDirectory.LinkOrMirror(currentDirectory, targetDirectory);
+            PackageDirectory.Move(sourceDirectory, targetDirectory, DirectoryOverwriteStrategy.Overwrite);
+            PackageDirectory.Link(currentDirectory, targetDirectory);
         }
 
         /// <summary>
@@ -85,7 +99,7 @@ namespace Walterlv.IO.PackageManagement
         public void Copy(DirectoryInfo sourceDirectory, string version)
         {
             var targetDirectory = GetVersionDirectory(version, false);
-            PackageDirectory.Copy(sourceDirectory, targetDirectory);
+            PackageDirectory.Copy(sourceDirectory, targetDirectory, DirectoryOverwriteStrategy.Overwrite);
         }
 
         /// <summary>
@@ -97,8 +111,8 @@ namespace Walterlv.IO.PackageManagement
         {
             var targetDirectory = GetVersionDirectory(version, false);
             var currentDirectory = GetVersionDirectory(CurrentDirectoryName, false);
-            PackageDirectory.Copy(sourceDirectory, targetDirectory);
-            PackageDirectory.LinkOrMirror(currentDirectory, targetDirectory);
+            PackageDirectory.Copy(sourceDirectory, targetDirectory, DirectoryOverwriteStrategy.Overwrite);
+            PackageDirectory.Link(currentDirectory, targetDirectory);
         }
 
         /// <summary>
