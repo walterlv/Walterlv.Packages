@@ -6,8 +6,4 @@
     <Description>Walterlv.Logger is a high-performance logging tool for client apps. It also provide Markdown formatter to let your log file beautiful including output table and code. Notice: it is not recommended to use this library for server apps because it is not optimized for huge numbers of logs.</Description>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Update="dotnetCampus.SourceYard" Version="0.1.19003-alpha" />
-  </ItemGroup>
-
 </Project>
