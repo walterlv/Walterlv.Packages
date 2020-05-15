@@ -6,8 +6,4 @@
     <RootNamespace>Walterlv.Windows</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Update="dotnetCampus.SourceYard" Version="0.1.19003-alpha" />
-  </ItemGroup>
-
 </Project>

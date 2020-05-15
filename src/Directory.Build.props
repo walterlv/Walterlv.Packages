@@ -2,12 +2,13 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <WarningsAsErrors>$(WarningsAsErrors);CS8600;CS8601;CS8602;CS8603;CS8604;CS8609;CS8610;CS8616;CS8618;CS8619;CS8622;CS8625</WarningsAsErrors>
+    <WarningsAsErrors>$(WarningsAsErrors);CS8600;CS8601;CS8602;CS8603;CS8604;CS8609;CS8610;CS8614;CS8616;CS8618;CS8619;CS8622;CS8625</WarningsAsErrors>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Walterlv.Packages.snk</AssemblyOriginatorKeyFile>
+    <DocumentationFile>$(OutputPath)$(Configuration)\Walterlv.Logger.xml</DocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>$(MSBuildThisFileDirectory)..\bin\$(Configuration)</PackageOutputPath>
-    <Version>2.0.0</Version>
+    <Version>2.1.1</Version>
     <Authors>walterlv</Authors>
     <Company>walterlv</Company>
     <Product>Walterlv.Packages</Product>
@@ -16,6 +17,6 @@
     <PackageProjectUrl>https://github.com/walterlv/Walterlv.Packages</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.17761-alpha" PrivateAssets="all" />
+    <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.19027-alpha" PrivateAssets="all" />
   </ItemGroup>
 </Project>

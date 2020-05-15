@@ -12,8 +12,4 @@
     <Reference Include="System.Web" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="dotnetCampus.SourceYard" Version="0.1.19003-alpha" />
-  </ItemGroup>
-
 </Project>
