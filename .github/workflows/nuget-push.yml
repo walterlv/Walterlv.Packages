@@ -22,15 +22,19 @@ jobs:
       with:
         dotnet-version: 3.1.202
 
-    # 编译整个项目
-    - name: Build the solution
-      run: msbuild /t:Restore /p:Configuration=Release
-
     # 安装 NuGet
     - uses: nuget/setup-nuget@v1
       with:
         nuget-api-key: ${{ secrets.NuGetAPIKey }}
         nuget-version: '5.x'
+
+    # 还原 NuGet 包
+    - name: NuGet restore
+      run: nuget restore
+
+    # 编译整个项目
+    - name: Build the solution
+      run: msbuild /p:Configuration=Release
 
     # 推送 NuGet
     - name: Push packages
