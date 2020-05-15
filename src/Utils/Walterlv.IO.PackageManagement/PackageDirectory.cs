@@ -105,15 +105,8 @@ namespace Walterlv.IO.PackageManagement
             }
 
             var logger = new IOResult();
-            if (Directory.Exists(directory.FullName))
-            {
-                logger.Log("文件夹已经存在。");
-            }
-            else
-            {
-                logger.Log("文件夹不存在，创建。");
-                Directory.CreateDirectory(directory.FullName);
-            }
+            logger.Log("无论是否存在，都创建文件夹。");
+            Directory.CreateDirectory(directory.FullName);
             return logger;
         }
 
@@ -235,10 +228,8 @@ namespace Walterlv.IO.PackageManagement
 
             try
             {
-                if (!Directory.Exists(targetDirectory.FullName))
-                {
-                    Directory.CreateDirectory(targetDirectory.FullName);
-                }
+                logger.Log("无论是否存在，都创建文件夹。");
+                Directory.CreateDirectory(targetDirectory.FullName);
 
                 foreach (var file in sourceDirectory.EnumerateFiles())
                 {
