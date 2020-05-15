@@ -8,7 +8,7 @@
     <DocumentationFile>$(OutputPath)$(Configuration)\Walterlv.Logger.xml</DocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>$(MSBuildThisFileDirectory)..\bin\$(Configuration)</PackageOutputPath>
-    <Version>2.1.0</Version>
+    <Version>2.1.1</Version>
     <Authors>walterlv</Authors>
     <Company>walterlv</Company>
     <Product>Walterlv.Packages</Product>
@@ -17,6 +17,6 @@
     <PackageProjectUrl>https://github.com/walterlv/Walterlv.Packages</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.17761-alpha" PrivateAssets="all" />
+    <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.19027-alpha" PrivateAssets="all" />
   </ItemGroup>
 </Project>
