@@ -19,5 +19,9 @@ jobs:
         uses: actions/setup-dotnet@v1
       - name: Build
         run: dotnet build --configuration $env:Configuration
+        env:
+          Configuration: ${{ matrix.configuration }}
       - name: Test
         run: dotnet test --configuration $env:Configuration
+        env:
+          Configuration: ${{ matrix.configuration }}
