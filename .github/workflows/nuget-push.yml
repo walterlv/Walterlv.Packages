@@ -1,0 +1,37 @@
+name: NuGet Push
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    # 安装 .NET Core
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.202
+
+    # 编译整个项目
+    - name: Build the solution
+      run: msbuild /t:Restore /p:Configuration=Release
+
+    # 安装 NuGet
+    - uses: nuget/setup-nuget@v1
+      with:
+        nuget-api-key: ${{ secrets.NuGetAPIKey }}
+        nuget-version: '5.x'
+
+    # 推送 NuGet
+    - name: Push packages
+      run: nuget push bin/Release/*.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NugetKey }} -SkipDuplicate -NoSymbols
