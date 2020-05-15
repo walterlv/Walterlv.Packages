@@ -5,41 +5,14 @@ on:
     branches: [ master ]
 
 jobs:
-
   build:
-
     runs-on: windows-latest
-
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
-    # 安装 .NET Core
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.202
-
-    # 添加 MSBuild.exe 到环境变量: https://github.com/microsoft/setup-msbuild
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@2008f912f56e61277eefaac6d1888b750582aa16
-
-    # 安装 NuGet
-    - uses: nuget/setup-nuget@v1
-      with:
-        nuget-api-key: ${{ secrets.NuGetAPIKey }}
-        nuget-version: '5.x'
-
-    # 还原 NuGet 包
-    - name: NuGet restore
-      run: nuget restore
-
-    # 编译整个项目
-    - name: Build the solution
-      run: msbuild /p:Configuration=Release
-
-    # 推送 NuGet
-    - name: Push packages
-      run: nuget push ./bin/Release/*.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -NoSymbols
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup
+        uses: actions/setup-dotnet@v1
+      - name: Pack
+        run: dotnet build --configuration Release
+      - name: Push
+        run: dotnet nuget push .\bin\Release\*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NuGetAPIKey }} --skip-duplicate --no-symbols 1
