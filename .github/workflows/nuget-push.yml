@@ -42,4 +42,4 @@ jobs:
 
     # 推送 NuGet
     - name: Push packages
-      run: nuget push bin/Release/*.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -NoSymbols
+      run: nuget push ./bin/Release/*.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -NoSymbols
