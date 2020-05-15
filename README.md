@@ -1,6 +1,6 @@
 # Walterlv.Package
 
-![.NET Build & Test](https://github.com/walterlv/Walterlv.Packages/workflows/.NET%20Build%20&%20Test/badge.svg) [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu) [![LICENSE](https://img.shields.io/badge/license-NPL%20(The%20996%20Prohibited%20License)-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
+![.NET Build & Test](https://github.com/walterlv/Walterlv.Packages/workflows/.NET%20Build%20&%20Test/badge.svg) ![NuGet Push](https://github.com/walterlv/Walterlv.Packages/workflows/NuGet%20Push/badge.svg) [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu) [![LICENSE](https://img.shields.io/badge/license-NPL%20(The%20996%20Prohibited%20License)-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
 
 包含 [walterlv](https://github.com/walterlv) 的大量小型公开库。
 
