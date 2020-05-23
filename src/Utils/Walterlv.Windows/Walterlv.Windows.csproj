@@ -4,6 +4,7 @@
     <TargetFrameworks>net45;netcoreapp3.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <RootNamespace>Walterlv.Windows</RootNamespace>
+    <Description>This is a library for WPF projects. In this version, it provides search across visual tree hierarchies.</Description>
   </PropertyGroup>
 
 </Project>

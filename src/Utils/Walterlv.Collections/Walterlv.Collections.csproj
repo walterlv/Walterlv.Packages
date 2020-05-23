@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <Description>Provide some kinds of unsual collections such as AsyncQueue for async/await pattern, ObservableConcurrentBag for notification in multi-thread situations.</Description>
   </PropertyGroup>
 
 </Project>

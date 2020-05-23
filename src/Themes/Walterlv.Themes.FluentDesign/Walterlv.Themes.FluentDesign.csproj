@@ -4,6 +4,7 @@
     <TargetFrameworks>net45;netcoreapp3.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <RootNamespace>Walterlv.Windows</RootNamespace>
+    <Description>Provide fluent design visual styles such as `RevealBrush` for WPF. But you should know that it is simulated so it's not recommended to use it in very large projects.</Description>
   </PropertyGroup>
 
 </Project>

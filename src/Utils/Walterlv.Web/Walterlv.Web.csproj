@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <Description>This library provide some extensions for System.Web. It contains query string extensions only in this version.</Description>
   </PropertyGroup>
 
   <!--<ItemGroup>

@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
     <RootNamespace>Walterlv</RootNamespace>
+    <Description>Provide information of .NET Framework from the system registry.</Description>
   </PropertyGroup>
 
   <ItemGroup Condition="$(TargetFramework) == 'netstandard2.0'">

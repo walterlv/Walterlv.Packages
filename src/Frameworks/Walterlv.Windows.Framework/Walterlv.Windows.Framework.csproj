@@ -4,6 +4,7 @@
     <TargetFrameworks>net45;netcoreapp3.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <RootNamespace>Walterlv</RootNamespace>
+    <Description>This is an MVVM framework without any document.</Description>
   </PropertyGroup>
 
 </Project>
