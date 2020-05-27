@@ -171,7 +171,7 @@ namespace Walterlv.IO.PackageManagement
             }
             else
             {
-                logger.Log("源目录与目标目录在相同驱动器，先进行复制，再删除源目录。");
+                logger.Log("源目录与目标目录不在相同驱动器，先进行复制，再删除源目录。");
 
                 var copyResult = Copy(sourceDirectory, targetDirectory);
                 logger.Append(copyResult);
