@@ -16,6 +16,6 @@
     <PackageProjectUrl>https://github.com/walterlv/Walterlv.Packages</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.19029-alpha" PrivateAssets="all" />
+    <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.19031-alpha" PrivateAssets="all" />
   </ItemGroup>
 </Project>
