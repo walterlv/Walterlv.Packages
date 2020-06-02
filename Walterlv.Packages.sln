@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -19,12 +21,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.Packages.Performance", "tests\Walterlv.Packages.Performance\Walterlv.Packages.Performance.csproj", "{BABAA81E-C4F7-4CCB-8879-AB6DD1892032}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.Packages.Tests", "tests\Walterlv.Packages.Tests\Walterlv.Packages.Tests.csproj", "{0559B38A-5312-4132-8EF0-D993FFA707CF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9CBF0509-7CD4-4B23-B4EE-858A63B7860A}"
-	ProjectSection(SolutionItems) = preProject
-		src\Directory.Build.props = src\Directory.Build.props
-		src\Directory.Build.targets = src\Directory.Build.targets
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.Windows.Framework", "src\Frameworks\Walterlv.Windows.Framework\Walterlv.Windows.Framework.csproj", "{C85C2E74-44E7-471A-B23C-D99165CD5327}"
 EndProject
@@ -46,7 +42,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.Logger", "src\Util
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.NullableAttributes", "src\Diagnostics\Walterlv.NullableAttributes\Walterlv.NullableAttributes.csproj", "{425F8A12-9029-4187-8691-75CAD92B09FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Web", "src\Utils\Walterlv.Web\Walterlv.Web.csproj", "{69B3B7FB-8F32-454D-AF34-A0526C8B5650}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.Web", "src\Utils\Walterlv.Web\Walterlv.Web.csproj", "{69B3B7FB-8F32-454D-AF34-A0526C8B5650}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -118,7 +114,6 @@ Global
 		{114E2A58-4883-465E-8575-2A8B4182C603} = {9F1BB978-B1C1-4B93-901E-5E4B0BAED900}
 		{BABAA81E-C4F7-4CCB-8879-AB6DD1892032} = {D95A793C-1D14-4AA6-A552-D3C8CAD6BD45}
 		{0559B38A-5312-4132-8EF0-D993FFA707CF} = {D95A793C-1D14-4AA6-A552-D3C8CAD6BD45}
-		{9CBF0509-7CD4-4B23-B4EE-858A63B7860A} = {121B8FE9-430E-4230-A21C-5D441D73E411}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10F3D597-83CE-4AD7-94AA-9BEC04207FC7}

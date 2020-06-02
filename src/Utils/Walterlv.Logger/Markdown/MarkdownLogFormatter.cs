@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -40,6 +41,7 @@ namespace Walterlv.Logging.Markdown
         /// <param name="items">要记录的表格。集合中的每一个元素是表格中的一行。</param>
         /// <param name="columnFormatter">表格的列描述。</param>
         /// <param name="callerMemberName">编译器自动传入。</param>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static void TraceTable<T>(this ILogger logger, string text,
             IReadOnlyList<T> items, IDictionary<string, Func<T, string>> columnFormatter,
             [CallerMemberName] string? callerMemberName = null)
@@ -51,6 +53,29 @@ namespace Walterlv.Logging.Markdown
             }
 
             var table = MakeTable(items, columnFormatter);
+            logger.Message($@"{text}
+{table}", callerMemberName);
+        }
+
+        /// <summary>
+        /// 使用表格的形式记录一份数据。
+        /// </summary>
+        /// <param name="logger">日志。</param>
+        /// <param name="text">表头，或者对此表格摘要的简短描述。</param>
+        /// <param name="items">要记录的表格。集合中的每一个元素是表格中的一行。</param>
+        /// <param name="dataTemplate">表格的列描述。</param>
+        /// <param name="callerMemberName">编译器自动传入。</param>
+        public static void TraceTable<T>(this ILogger logger, string text,
+            IReadOnlyList<T> items, IMarkdownDataTemplate<T> dataTemplate,
+            [CallerMemberName] string? callerMemberName = null)
+            where T : notnull
+        {
+            if (logger is null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            var table = MakeTable(items, dataTemplate);
             logger.Message($@"{text}
 {table}", callerMemberName);
         }
@@ -85,6 +110,7 @@ namespace Walterlv.Logging.Markdown
         /// <param name="items">要记录的表格。集合中的每一个元素是表格中的一行。</param>
         /// <param name="columnFormatter">表格的列描述。</param>
         /// <param name="callerMemberName">编译器自动传入。</param>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static void MessageTable<T>(this ILogger logger, string text,
             IReadOnlyList<T> items, IDictionary<string, Func<T, string>> columnFormatter,
             [CallerMemberName] string? callerMemberName = null)
@@ -98,6 +124,42 @@ namespace Walterlv.Logging.Markdown
             var table = MakeTable(items, columnFormatter);
             logger.Message($@"{text}
 {table}", callerMemberName);
+        }
+
+        /// <summary>
+        /// 使用表格的形式记录一份关键的摘要。
+        /// </summary>
+        /// <typeparam name="T">要格式化成表格的集合中的元素类型。</typeparam>
+        /// <param name="logger">日志。</param>
+        /// <param name="items">要记录的表格。集合中的每一个元素是表格中的一行。</param>
+        /// <param name="dataTemplate">描述表格的列，以及如何格式化表格中列的模板。</param>
+        /// <param name="callerMemberName">编译器自动传入。</param>
+        public static void MessageTable<T>(this ILogger logger,
+            IReadOnlyList<T> items, IMarkdownDataTemplate<T> dataTemplate,
+            [CallerMemberName] string? callerMemberName = null)
+            where T : notnull
+        {
+            if (logger is null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            var table = MakeTable(items, dataTemplate);
+            logger.Message(table, callerMemberName);
+        }
+
+
+        /// <summary>
+        /// 创建表格。
+        /// </summary>
+        /// <typeparam name="T">要格式化成表格的集合中的元素类型。</typeparam>
+        /// <param name="items">要记录的表格。集合中的每一个元素是表格中的一行。</param>
+        /// <param name="dataTemplate">表格的列描述。</param>
+        /// <returns>Markdown 格式的表格。</returns>
+        private static string MakeTable<T>(IReadOnlyList<T> items, IMarkdownDataTemplate<T> dataTemplate) where T : notnull
+        {
+            var template = dataTemplate.ToDictionary();
+            return MakeTable<T>(items, template);
         }
 
         /// <summary>
