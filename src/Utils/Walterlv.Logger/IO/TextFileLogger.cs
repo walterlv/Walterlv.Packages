@@ -47,11 +47,11 @@ namespace Walterlv.Logging.IO
         /// </summary>
         /// <param name="infoLogFile">信息和警告的日志文件。</param>
         /// <param name="errorLogFile">错误日志文件。</param>
-        /// <param name="appendInfo">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
-        /// <param name="appendError">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
+        /// <param name="shouldAppendInfo">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
+        /// <param name="shouldAppendError">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
         /// <param name="lineEnd">行尾符号。默认是 \n，如果你愿意，也可以改为 \r\n 或者 \r。</param>
         public TextFileLogger(FileInfo infoLogFile, FileInfo errorLogFile,
-            bool appendInfo = false, bool appendError = true, string lineEnd = "\n")
+            bool shouldAppendInfo = false, bool shouldAppendError = true, string lineEnd = "\n")
         {
             if (infoLogFile is null)
             {
@@ -67,8 +67,8 @@ namespace Walterlv.Logging.IO
             var areSameFile = string.Equals(infoLogFile.FullName, errorLogFile.FullName, StringComparison.OrdinalIgnoreCase);
             _infoLogFile = infoLogFile;
             _errorLogFile = areSameFile ? infoLogFile : errorLogFile;
-            _shouldAppendInfo = appendInfo;
-            _shouldAppendError = appendError;
+            _shouldAppendInfo = shouldAppendInfo;
+            _shouldAppendError = shouldAppendError;
         }
 
         /// <inheritdoc />
