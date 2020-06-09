@@ -16,8 +16,8 @@ namespace Walterlv.Logging.IO
         private readonly string _lineEnd;
         private readonly FileInfo _infoLogFile;
         private readonly FileInfo _errorLogFile;
-        private readonly bool _isInfoAppended;
-        private readonly bool _isErrorAppended;
+        private readonly bool _shouldAppendInfo;
+        private readonly bool _shouldAppendError;
         private StreamWriter? _infoWriter;
         private StreamWriter? _errorWriter;
 
@@ -37,8 +37,8 @@ namespace Walterlv.Logging.IO
             _infoLogFile = logFile;
             _errorLogFile = logFile;
             _lineEnd = VerifyLineEnd(lineEnd);
-            _isInfoAppended = append;
-            _isErrorAppended = append;
+            _shouldAppendInfo = append;
+            _shouldAppendError = append;
         }
 
         /// <summary>
@@ -47,11 +47,11 @@ namespace Walterlv.Logging.IO
         /// </summary>
         /// <param name="infoLogFile">信息和警告的日志文件。</param>
         /// <param name="errorLogFile">错误日志文件。</param>
-        /// <param name="isInfoAppended">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
-        /// <param name="isErrorAppended">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
+        /// <param name="appendInfo">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
+        /// <param name="appendError">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
         /// <param name="lineEnd">行尾符号。默认是 \n，如果你愿意，也可以改为 \r\n 或者 \r。</param>
         public TextFileLogger(FileInfo infoLogFile, FileInfo errorLogFile,
-            bool isInfoAppended = false, bool isErrorAppended = true, string lineEnd = "\n")
+            bool appendInfo = false, bool appendError = true, string lineEnd = "\n")
         {
             if (infoLogFile is null)
             {
@@ -67,8 +67,8 @@ namespace Walterlv.Logging.IO
             var areSameFile = string.Equals(infoLogFile.FullName, errorLogFile.FullName, StringComparison.OrdinalIgnoreCase);
             _infoLogFile = infoLogFile;
             _errorLogFile = areSameFile ? infoLogFile : errorLogFile;
-            _isInfoAppended = isInfoAppended;
-            _isErrorAppended = isErrorAppended;
+            _shouldAppendInfo = appendInfo;
+            _shouldAppendError = appendError;
         }
 
         /// <inheritdoc />
@@ -79,10 +79,10 @@ namespace Walterlv.Logging.IO
                 return;
             }
 
-            _infoWriter = await CreateWriterAsync(_infoLogFile, _isInfoAppended).ConfigureAwait(false);
+            _infoWriter = await CreateWriterAsync(_infoLogFile, _shouldAppendInfo).ConfigureAwait(false);
             _errorWriter = _errorLogFile == _infoLogFile
                 ? _infoWriter
-                : await CreateWriterAsync(_errorLogFile, _isErrorAppended).ConfigureAwait(false);
+                : await CreateWriterAsync(_errorLogFile, _shouldAppendError).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
