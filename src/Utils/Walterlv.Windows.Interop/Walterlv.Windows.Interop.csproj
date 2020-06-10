@@ -4,7 +4,6 @@
     <TargetFrameworks>net45;netcoreapp3.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <RootNamespace>Walterlv.Windows</RootNamespace>
-    <PackSource>False</PackSource>
     <Description>This library provides interop between WPF and native win32 windows.</Description>
   </PropertyGroup>
 
