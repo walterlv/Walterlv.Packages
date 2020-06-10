@@ -14,7 +14,7 @@ namespace Walterlv.Windows.Interop
     /// <summary>
     /// 包装一个 <see cref="Window"/> 成为一个 WPF 控件。
     /// </summary>
-    internal class WindowWrapper : FrameworkElement
+    public class WindowWrapper : FrameworkElement
     {
         static WindowWrapper()
         {

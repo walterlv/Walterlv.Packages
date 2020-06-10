@@ -93,6 +93,8 @@
                 DataContext="{Binding SelectedItem, Source={x:Reference NavigationListView}}">
             <ContentPresenter Content="{Binding View}" />
         </Border>
+        <Border Grid.Row="2" x:Name="TestLayer">
+        </Border>
         <Grid Grid.Row="3" Background="{StaticResource Brush.Background.Footer}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
