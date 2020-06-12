@@ -55,6 +55,10 @@ namespace Walterlv.Logging.Core
             => LogCore(text, LogLevel.Error, exception.ToString(), callerMemberName);
 
         /// <inheritdoc />
+        public void Error(string text, Exception exception, [CallerMemberName] string? callerMemberName = null)
+            => Error(exception, text, callerMemberName);
+
+        /// <inheritdoc />
         public void Fatal(Exception exception, string? text, [CallerMemberName] string? callerMemberName = null)
             => LogCore(text, LogLevel.Error, exception.ToString(), callerMemberName);
 

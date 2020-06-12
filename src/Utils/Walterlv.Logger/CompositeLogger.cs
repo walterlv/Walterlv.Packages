@@ -73,6 +73,10 @@ namespace Walterlv.Logging
             => Log(x => x.Error(exception, message, callerMemberName));
 
         /// <inheritdoc />
+        public void Error(string message, Exception exception, [CallerMemberName] string? callerMemberName = null)
+            => Error(exception, message, callerMemberName);
+
+        /// <inheritdoc />
         public void Fatal(Exception exception, string message, [CallerMemberName] string? callerMemberName = null)
             => Log(x => x.Fatal(exception, message, callerMemberName));
 
