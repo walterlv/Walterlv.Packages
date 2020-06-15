@@ -9,8 +9,8 @@ namespace Walterlv.Logging.Core
     /// </summary>
     public abstract partial class AsyncOutputLogger : ILogger
     {
-        private bool _isInitialized;
         private readonly AsyncQueue<LogContext> _queue;
+        private bool _isInitialized;
 
         /// <summary>
         /// 创建 Markdown 格式的日志记录实例。
