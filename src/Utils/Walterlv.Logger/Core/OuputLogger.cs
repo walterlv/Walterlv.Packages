@@ -94,6 +94,7 @@ namespace Walterlv.Logging.Core
                 {
                     if (!_isInitialized)
                     {
+                        _isInitialized = true;
                         OnInitialized();
                     }
                 }
