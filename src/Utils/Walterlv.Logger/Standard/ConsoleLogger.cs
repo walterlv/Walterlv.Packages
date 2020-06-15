@@ -12,9 +12,11 @@ namespace Walterlv.Logging.Standard
     {
         private DateTimeOffset _lastTime;
 
+        /// <inheritdoc />
         protected override Task OnInitializedAsync() => Task.FromResult<object?>(null);
 
-        protected override void OnLogReceived(in Context context)
+        /// <inheritdoc />
+        protected override void OnLogReceived(in LogContext context)
         {
             // 输出新的一天。
             var currentTime = DateTimeOffset.Now;

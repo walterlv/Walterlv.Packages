@@ -1,26 +1,15 @@
 ﻿using System;
-using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 namespace Walterlv.Logging.Core
 {
     /// <summary>
-    /// 为异步的日志记录提供公共基类。
+    /// 为同步的日志记录提供公共基类。
     /// </summary>
-    public abstract partial class AsyncOutputLogger : ILogger
+    public abstract class OuputLogger : ILogger
     {
+        private readonly object _locker = new object();
         private bool _isInitialized;
-        private readonly AsyncQueue<LogContext> _queue;
-
-        /// <summary>
-        /// 创建 Markdown 格式的日志记录实例。
-        /// </summary>
-        protected AsyncOutputLogger()
-        {
-            _queue = new AsyncQueue<LogContext>();
-            StartLogging();
-        }
 
         /// <summary>
         /// 获取或设置日志的记录等级。
@@ -79,7 +68,7 @@ namespace Walterlv.Logging.Core
                 return;
             }
 
-            _queue.Enqueue(new LogContext(DateTimeOffset.Now, callerMemberName, text ?? "", extraInfo, currentLevel));
+            LogCore(new LogContext(DateTimeOffset.Now, callerMemberName, text ?? "", extraInfo, currentLevel));
         }
 
         /// <summary>
@@ -99,22 +88,19 @@ namespace Walterlv.Logging.Core
                 return;
             }
 
-            _queue.Enqueue(context);
-        }
-
-        /// <summary>
-        /// 开始异步输出日志。
-        /// </summary>
-        private async void StartLogging()
-        {
-            while (true)
+            if (!_isInitialized)
             {
-                var context = await _queue.DequeueAsync().ConfigureAwait(false);
-                if (!_isInitialized)
+                lock (_locker)
                 {
-                    _isInitialized = true;
-                    await OnInitializedAsync().ConfigureAwait(false);
+                    if (!_isInitialized)
+                    {
+                        OnInitialized();
+                    }
                 }
+            }
+
+            lock (_locker)
+            {
                 OnLogReceived(context);
             }
         }
@@ -122,7 +108,7 @@ namespace Walterlv.Logging.Core
         /// <summary>
         /// 派生类重写此方法时，可以在收到第一条日志的时候执行一些初始化操作。
         /// </summary>
-        protected abstract Task OnInitializedAsync();
+        protected abstract void OnInitialized();
 
         /// <summary>
         /// 派生类重写此方法时，将日志输出。

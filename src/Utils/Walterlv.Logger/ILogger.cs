@@ -33,13 +33,13 @@ namespace Walterlv.Logging
         void Warning(string message, [CallerMemberName] string? callerMemberName = null);
 
         /// <summary>
-        /// 在你无法通过异常来描述错误的时候，使用字符串来记录一条错误。
-        /// 建议使用 <see cref="Warning(string, string)"/> 来表达此含义，因为 <see cref="LogLevel.Warning"/> 表达的就是方法在进入非预期分支的情况。
-        /// 如果此时你能捕获一个异常，建议使用异常重载 <see cref="Error(Exception, string, string)"/>，而不是使用直接使用字符串。
+        /// 在单独的日志文件中记录异常，并同时在普通的日志文件中插入一段高亮显示的日志。
+        /// 请注意，并不是所有的异常都需要调用此方法记录，此方法仅仅记录非预期的异常。
         /// </summary>
-        /// <param name="message">错误信息。</param>
+        /// <param name="message">对当前异常的文字描述。</param>
+        /// <param name="exception">异常实例。</param>
         /// <param name="callerMemberName">编译器自动传入。</param>
-        void Error(string message, [CallerMemberName] string? callerMemberName = null);
+        void Error(string message, Exception? exception = null, [CallerMemberName] string? callerMemberName = null);
 
         /// <summary>
         /// 在单独的日志文件中记录异常，并同时在普通的日志文件中插入一段高亮显示的日志。
@@ -49,15 +49,6 @@ namespace Walterlv.Logging
         /// <param name="message">对当前异常的文字描述。</param>
         /// <param name="callerMemberName">编译器自动传入。</param>
         void Error(Exception exception, string? message = null, [CallerMemberName] string? callerMemberName = null);
-
-        /// <summary>
-        /// 在单独的日志文件中记录异常，并同时在普通的日志文件中插入一段高亮显示的日志。
-        /// 请注意，并不是所有的异常都需要调用此方法记录，此方法仅仅记录非预期的异常。
-        /// </summary>
-        /// <param name="message">对当前异常的文字描述。</param>
-        /// <param name="exception">异常实例。</param>
-        /// <param name="callerMemberName">编译器自动传入。</param>
-        void Error(string message, Exception exception, [CallerMemberName] string? callerMemberName = null);
 
         /// <summary>
         /// 在单独的日志文件中记录一条导致致命性错误的异常，并同时在普通的日志文件中插入一段高亮显示的致命错误标记。

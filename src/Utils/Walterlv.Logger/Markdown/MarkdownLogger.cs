@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+
+using Walterlv.Logging.Core;
 using Walterlv.Logging.IO;
 
 namespace Walterlv.Logging.Markdown
@@ -37,7 +39,7 @@ namespace Walterlv.Logging.Markdown
         }
 
         /// <inheritdoc />
-        protected override string BuildLogText(in Context context, bool containsExtraInfo, string lineEnd)
+        protected override string BuildLogText(in LogContext context, bool containsExtraInfo, string lineEnd)
         {
             var time = context.Time.ToLocalTime().ToString("yyyy.MM.dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
             var member = context.CallerMemberName;

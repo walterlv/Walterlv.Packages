@@ -86,7 +86,7 @@ namespace Walterlv.Logging.IO
         }
 
         /// <inheritdoc />
-        protected sealed override void OnLogReceived(in Context context)
+        protected sealed override void OnLogReceived(in LogContext context)
         {
             if (_isDisposed)
             {
@@ -115,7 +115,7 @@ namespace Walterlv.Logging.IO
         /// <param name="containsExtraInfo">此次格式化时，是否应该包含额外的日志信息。</param>
         /// <param name="lineEnd">记录到文件时应该使用的行尾符号。</param>
         /// <returns>格式化后的日志文本。</returns>
-        protected virtual string BuildLogText(in Context context, bool containsExtraInfo, string lineEnd)
+        protected virtual string BuildLogText(in LogContext context, bool containsExtraInfo, string lineEnd)
         {
             var time = context.Time.ToLocalTime().ToString("yyyy.MM.dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
             var member = context.CallerMemberName;
