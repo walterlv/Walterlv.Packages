@@ -5,7 +5,7 @@ namespace Walterlv.Logging.Standard
     /// <summary>
     /// 提供向控制台输出日志的方法。
     /// </summary>
-    public sealed class ConsoleLogger : OuputLogger
+    public sealed class ConsoleLogger : OutputLogger
     {
         private readonly ConsoleLogWriter _writer = new ConsoleLogWriter();
 

@@ -6,7 +6,7 @@ namespace Walterlv.Logging.Core
     /// <summary>
     /// 为同步的日志记录提供公共基类。
     /// </summary>
-    public abstract class OuputLogger : ILogger
+    public abstract class OutputLogger : ILogger
     {
         private readonly object _locker = new object();
         private bool _isInitialized;

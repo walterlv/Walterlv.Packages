@@ -9,7 +9,7 @@ namespace Walterlv.Logging.Core
     /// <summary>
     /// 提供函数式的同步日志记录方法。
     /// </summary>
-    public sealed class ActionLogger : OuputLogger
+    public sealed class ActionLogger : OutputLogger
     {
         private readonly Action<LogContext> _onLogReceived;
         private readonly Action? _onInitialized;
