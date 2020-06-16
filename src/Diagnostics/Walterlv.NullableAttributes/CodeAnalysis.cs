@@ -1,4 +1,7 @@
-﻿namespace System.Diagnostics.CodeAnalysis
+﻿#if NETCOREAPP3_0 || NETCOREAPP3_1 || NETCOREAPP5_1 || NET5_0 || NET6_0
+// 新框架都包含 Nullable Attributes。
+#else
+namespace System.Diagnostics.CodeAnalysis
 {
     /// <summary>
     /// 标记一个不可空的输入实际上是可以传入 null 的。
@@ -107,3 +110,4 @@
         public bool ParameterValue { get; }
     }
 }
+#endif

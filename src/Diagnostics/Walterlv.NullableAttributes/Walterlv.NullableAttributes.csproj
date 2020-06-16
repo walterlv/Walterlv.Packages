@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net40;netstandard1.0;netcoreapp3.0</TargetFrameworks>
     <RootNamespace>System.Diagnostics.CodeAnalysis</RootNamespace>
     <Description>If you use C# 8.0 and enable the nullable types, this adds nullable attributes for your projects. Notice that all the nullable attributes are internal, it is recommonded to install Walterlv.NullableAttributes.Source to install source code as part of your poroject instead of installing Walterlv.NullableAttributes.</Description>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
-
+  
 </Project>
