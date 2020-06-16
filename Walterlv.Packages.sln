@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		src\Directory.Build.props = src\Directory.Build.props
 		src\Directory.Build.targets = src\Directory.Build.targets
 		README.md = README.md
+		build\Version.props = build\Version.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{9F1BB978-B1C1-4B93-901E-5E4B0BAED900}"
