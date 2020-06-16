@@ -1,13 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard2.0;netcoreapp3.0</TargetFrameworks>
     <Description>This library provide some extensions for System.Web. It contains query string extensions only in this version.</Description>
   </PropertyGroup>
-
-  <!--<ItemGroup>
-    <ProjectReference Include="..\..\Diagnostics\Walterlv.NullableAttributes\Walterlv.NullableAttributes.csproj" />
-  </ItemGroup>-->
 
   <ItemGroup Condition=" $(TargetFramework) == net45 ">
     <Reference Include="System.Web" />

@@ -8,7 +8,9 @@ namespace Walterlv.Web.Core
 {
     internal class QueryString
     {
-        //[return: NotNullIfNotNull("query")]
+#if NETCOREAPP3_0 || NETCOREAPP3_1 || NETCOREAPP5_1 || NET5_0 || NET6_0
+        [return: NotNullIfNotNull("query")]
+#endif
         public static string? Serialize(object? query, string? prefix = "?")
         {
             if (query is null)
@@ -19,7 +21,7 @@ namespace Walterlv.Web.Core
             var isContractedType = query.GetType().IsDefined(typeof(DataContractAttribute));
             var properties = from property in query.GetType().GetProperties()
                              where property.CanRead && (isContractedType ? property.IsDefined(typeof(DataMemberAttribute)) : true)
-                             let memberName = isContractedType ? property.GetCustomAttribute<DataMemberAttribute>().Name : property.Name
+                             let memberName = isContractedType ? property.GetCustomAttribute<DataMemberAttribute>()!.Name : property.Name
                              let value = property.GetValue(query, null)
                              where value != null && !string.IsNullOrWhiteSpace(value.ToString())
                              select memberName + "=" + HttpUtility.UrlEncode(value.ToString());

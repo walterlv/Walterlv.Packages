@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Walterlv.IO
@@ -41,7 +42,7 @@ namespace Walterlv.IO
         /// <param name="limitedFileNameLength">如果需要，可以限制最终生成文件名的长度。</param>
         /// <param name="fallbackName">当无法猜出文件名，或文件名长度过长时，将取此名字。</param>
         /// <returns>猜出的文件名。</returns>
-#if NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0
+#if NETCOREAPP3_0 || NETCOREAPP3_1 || NETCOREAPP5_1 || NET5_0 || NET6_0
         [return: NotNullIfNotNull("fallbackName")]
 #endif
         public static string? GuessFileNameFromUrl(string url, int? limitedFileNameLength = null, string? fallbackName = null)
