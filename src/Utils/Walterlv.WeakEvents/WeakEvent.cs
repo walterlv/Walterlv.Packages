@@ -59,12 +59,17 @@ namespace Walterlv.WeakEvents
         /// <param name="castedHandler">可被隐式转换为 Action 的方法组，请始终传入 <code>value.Invoke</code>。</param>
         public void Add(MulticastDelegate originalHandler, Action<TSender, TArgs> castedHandler)
         {
+            // 获取委托对应的目标实例。
+            var target = originalHandler.Target;
+            var method = originalHandler.Method;
+
+            if (target is null)
+            {
+                throw new NotSupportedException($"弱事件订阅时，事件的订阅者必须是一个对象。此委托中的目标实例是 null：{originalHandler}");
+            }
+
             lock (_locker)
             {
-                // 获取委托对应的目标实例。
-                var target = originalHandler.Target;
-                var method = originalHandler.Method;
-
                 // 找到目前是否有已经存储过的对 target 的弱引用实例，如果有，我们将复用此实例，而不是加入到集合中。
                 // 注意，这里的判定使用的是 ReferenceEquals，因为 ConditionalWeakTable 的比较用的是此方法，这可以确保回收时机两者一致。
                 var reference = _relatedInstances.Find(x => x.TryGetTarget(out var instance) && ReferenceEquals(target, instance));
@@ -96,11 +101,18 @@ namespace Walterlv.WeakEvents
         /// <param name="originalHandler">原始处理函数，请始终传入 <code>value</code>。</param>
         public void Remove(MulticastDelegate originalHandler)
         {
+            // 获取委托对应的目标实例。
+            var target = originalHandler.Target;
+
+            if (target is null)
+            {
+                // 因为 Add 的时候已经抛出了异常，所以 Remove 能进来的委托，一定不可能被 Add 过。
+                // 所以这里的 Remove 就像普通 -= 那些未曾订阅过的事件行为一样（什么都不做）即可。
+                return;
+            }
+
             lock (_locker)
             {
-                // 获取委托对应的目标实例。
-                var target = originalHandler.Target;
-
                 // 找到目前是否有已经存储过的对 target 的弱引用实例，如果有，我们将复用此实例，而不是加入到集合中。
                 // 注意，这里的判定使用的是 ReferenceEquals，因为 ConditionalWeakTable 的比较用的是此方法，这可以确保回收时机两者一致。
                 var reference = _relatedInstances.Find(x => x.TryGetTarget(out var instance) && ReferenceEquals(target, instance));

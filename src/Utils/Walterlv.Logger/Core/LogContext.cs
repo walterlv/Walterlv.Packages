@@ -70,7 +70,7 @@ namespace Walterlv.Logging.Core
         {
             var hashCode = 782125786;
             hashCode = hashCode * -1521134295 + StringComparer.Ordinal.GetHashCode(Text);
-            hashCode = hashCode * -1521134295 + StringComparer.Ordinal.GetHashCode(ExtraInfo);
+            hashCode = hashCode * -1521134295 + ExtraInfo is string extraInfo ? StringComparer.Ordinal.GetHashCode(extraInfo) : 0;
             hashCode = hashCode * -1521134295 + CurrentLevel.GetHashCode();
             hashCode = hashCode * -1521134295 + Time.GetHashCode();
             hashCode = hashCode * -1521134295 + StringComparer.Ordinal.GetHashCode(CallerMemberName);
