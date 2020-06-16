@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0;netstandard2.0;net45</TargetFrameworks>
     <Description>Walterlv.IO.PackageManagement is a tool for you to manage packages. It manage a directory with many versions of sub-directories and a current Junction Point linked to one of them.</Description>
   </PropertyGroup>
 

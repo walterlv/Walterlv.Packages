@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <RootNamespace>Walterlv.Windows</RootNamespace>
     <Description>This library provides interop between WPF and native win32 windows.</Description>
@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Lsj.Util.Win32" Version="4.1.8" />
-    <PackageReference Condition=" $(TargetFramework) == net45 " Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Condition=" '$(TargetFramework)' == 'net45' " Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
 </Project>

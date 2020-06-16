@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0;netstandard2.0;net45</TargetFrameworks>
     <Description>This library provide some extensions for System.Web. It contains query string extensions only in this version.</Description>
   </PropertyGroup>
 
