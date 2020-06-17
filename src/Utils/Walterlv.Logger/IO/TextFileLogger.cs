@@ -94,7 +94,7 @@ namespace Walterlv.Logging.IO
             }
 
             var areSameFile = _infoWriter == _errorWriter;
-            if (!areSameFile && context.CurrentLevel > LogLevel.Error)
+            if (!areSameFile && context.CurrentLevel <= LogLevel.Error)
             {
                 // 写入日志的主要部分。
                 _infoWriter?.WriteLine(BuildLogText(in context, containsExtraInfo: false, _lineEnd));
