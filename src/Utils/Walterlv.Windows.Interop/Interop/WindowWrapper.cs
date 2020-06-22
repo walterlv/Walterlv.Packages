@@ -8,6 +8,7 @@ using Size = System.Windows.Size;
 using Lsj.Util.Win32;
 using Lsj.Util.Win32.Enums;
 using Walterlv.Windows.Media;
+using Lsj.Util.Win32.BaseTypes;
 
 namespace Walterlv.Windows.Interop
 {
@@ -72,17 +73,27 @@ namespace Walterlv.Windows.Interop
             {
                 if (IsVisible)
                 {
+                    // 因为 Win32 函数的薛定谔性，以下方法的顺序都是精心测试过的：
+                    //  - 不闪
+                    //  - 不错位
+                    //  - 样式正确
+                    //  - 及时渲染
                     await ShowChildAsync().ConfigureAwait(true);
-                    await ArrangeChildAsync().ConfigureAwait(true);
                     IsChildStyle = true;
+                    await ArrangeChildAsync().ConfigureAwait(true);
                 }
             }
             else
             {
-                await ShowChildAsync().ConfigureAwait(true);
                 await ArrangeChildAsync().ConfigureAwait(true);
+                await ShowChildAsync().ConfigureAwait(true);
                 IsChildStyle = false;
             }
+
+            // 有些程序窗口大小不变时，无论如何刷新渲染都没用。因此必须强制通知窗口大小已经改变。
+            // 实际情况是虽然窗口大小不变，但客户区大小变化了，所以本就应该刷新布局。
+            await Task.Delay(1).ConfigureAwait(false);
+            User32.SendMessage(Handle, WindowsMessages.WM_SIZE, UIntPtr.Zero, IntPtr.Zero);
         }
 
         private async void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -234,13 +245,6 @@ namespace Walterlv.Windows.Interop
         /// <param name="size">设定子窗口的显示尺寸。</param>
         private async Task ArrangeChildAsync(Size? size = default)
         {
-            if (size == null)
-            {
-                size = !IsCaptured && User32.GetWindowRect(Handle, out var oldRect)
-                    ? (Size?)new Size(oldRect.right - oldRect.left, oldRect.bottom - oldRect.top)
-                    : (Size?)new Size(ActualWidth, ActualHeight);
-            }
-            var (width, height) = (size.Value.Width, size.Value.Height);
             var hwndSource = PresentationSource.FromVisual(this) as HwndSource;
             if (hwndSource is null)
             {
@@ -253,14 +257,23 @@ namespace Walterlv.Windows.Interop
             var scalingFactor = this.GetScalingRatioToDevice();
             var offset = transform.Transform(default);
 
+            // 计算布局尺寸。
+            if (size == null)
+            {
+                size = !IsCaptured && User32.GetWindowRect(Handle, out var oldRect)
+                    ? (Size?)new Size(oldRect.right - oldRect.left, oldRect.bottom - oldRect.top)
+                    : (Size?)new Size(ActualWidth * scalingFactor.Width, ActualHeight * scalingFactor.Height);
+            }
+            var (width, height) = (size.Value.Width, size.Value.Height);
+
             // 转移到后台线程执行代码，这可以让 UI 短暂地立刻响应。
             // await Dispatcher.ResumeBackgroundAsync();
 
             // 移动子窗口到合适的布局位置。
             var x = (int)(offset.X * scalingFactor.Width);
             var y = (int)(offset.Y * scalingFactor.Height);
-            var w = (int)(width * scalingFactor.Width);
-            var h = (int)(height * scalingFactor.Height);
+            var w = (int)width;
+            var h = (int)height;
 
             if (!IsCaptured && User32.GetWindowRect(hwndSource.Handle, out var ownerRect))
             {
