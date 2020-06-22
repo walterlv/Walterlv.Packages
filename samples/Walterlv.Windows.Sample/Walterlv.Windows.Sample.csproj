@@ -8,10 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Diagnostics\Walterlv.NullableAttributes\Walterlv.NullableAttributes.csproj" />
     <ProjectReference Include="..\..\src\Frameworks\Walterlv.Windows.Framework\Walterlv.Windows.Framework.csproj" />
     <ProjectReference Include="..\..\src\Themes\Walterlv.Themes.FluentDesign\Walterlv.Themes.FluentDesign.csproj" />
+    <ProjectReference Include="..\..\src\Utils\Walterlv.Collections\Walterlv.Collections.csproj" />
     <ProjectReference Include="..\..\src\Utils\Walterlv.Environment\Walterlv.Environment.csproj" />
+    <ProjectReference Include="..\..\src\Utils\Walterlv.IO.PackageManagement\Walterlv.IO.PackageManagement.csproj" />
+    <ProjectReference Include="..\..\src\Utils\Walterlv.IO\Walterlv.IO.csproj" />
+    <ProjectReference Include="..\..\src\Utils\Walterlv.Logger\Walterlv.Logger.csproj" />
+    <ProjectReference Include="..\..\src\Utils\Walterlv.WeakEvents\Walterlv.WeakEvents.csproj" />
+    <ProjectReference Include="..\..\src\Utils\Walterlv.Web\Walterlv.Web.csproj" />
+    <ProjectReference Include="..\..\src\Utils\Walterlv.Win32\Walterlv.Win32.csproj" />
     <ProjectReference Include="..\..\src\Utils\Walterlv.Windows.Interop\Walterlv.Windows.Interop.csproj" />
+    <ProjectReference Include="..\..\src\Utils\Walterlv.Windows\Walterlv.Windows.csproj" />
   </ItemGroup>
 
 </Project>
