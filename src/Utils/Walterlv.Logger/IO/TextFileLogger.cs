@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Walterlv.Logging.Core;
 
@@ -18,8 +20,8 @@ namespace Walterlv.Logging.IO
         private readonly FileInfo _errorLogFile;
         private readonly bool _shouldAppendInfo;
         private readonly bool _shouldAppendError;
-        private StreamWriter? _infoWriter;
-        private StreamWriter? _errorWriter;
+        private Mutex? _infoMutex;
+        private Mutex? _errorMutex;
 
         /// <summary>
         /// 创建文本文件记录日志的 <see cref="TextFileLogger"/> 的新实例。
@@ -72,17 +74,19 @@ namespace Walterlv.Logging.IO
         }
 
         /// <inheritdoc />
-        protected override async Task OnInitializedAsync()
+        protected override Task OnInitializedAsync()
         {
             if (_isDisposed)
             {
-                return;
+                return Task.FromResult<object?>(null);
             }
 
-            _infoWriter = await CreateWriterAsync(_infoLogFile, _shouldAppendInfo).ConfigureAwait(false);
-            _errorWriter = _errorLogFile == _infoLogFile
-                ? _infoWriter
-                : await CreateWriterAsync(_errorLogFile, _shouldAppendError).ConfigureAwait(false);
+            _infoMutex = new Mutex(false, _infoLogFile.FullName);
+            _errorMutex = _errorLogFile == _infoLogFile
+                ? _infoMutex
+                : new Mutex(false, _errorLogFile.FullName);
+
+            return Task.FromResult<object?>(null);
         }
 
         /// <inheritdoc />
@@ -93,18 +97,20 @@ namespace Walterlv.Logging.IO
                 return;
             }
 
-            var areSameFile = _infoWriter == _errorWriter;
+            var infoMutex = _infoMutex!;
+            var errorMutex = _errorMutex!;
+            var areSameFile = infoMutex == errorMutex;
             if (!areSameFile && context.CurrentLevel <= LogLevel.Error)
             {
                 // 写入日志的主要部分。
-                _infoWriter?.WriteLine(BuildLogText(in context, containsExtraInfo: false, _lineEnd));
+                Write(infoMutex, _infoLogFile, BuildLogText(in context, containsExtraInfo: false, _lineEnd));
 
                 // 写入日志的扩展部分。
-                _errorWriter?.WriteLine(BuildLogText(in context, context.ExtraInfo != null, _lineEnd));
+                Write(errorMutex, _errorLogFile, BuildLogText(in context, context.ExtraInfo != null, _lineEnd));
             }
             else
             {
-                _infoWriter?.WriteLine(BuildLogText(in context, context.ExtraInfo != null, _lineEnd));
+                Write(infoMutex, _infoLogFile, BuildLogText(in context, context.ExtraInfo != null, _lineEnd));
             }
         }
 
@@ -131,57 +137,6 @@ namespace Walterlv.Logging.IO
         }
 
         /// <summary>
-        /// 创建写入到日志的流。
-        /// </summary>
-        /// <param name="file">日志文件。</param>
-        /// <param name="append">是追加到文件还是直接覆盖文件。</param>
-        /// <returns>可等待的实例。</returns>
-        private async Task<StreamWriter?> CreateWriterAsync(FileInfo file, bool append)
-        {
-            var directory = file.Directory;
-            if (directory != null && !Directory.Exists(directory.FullName))
-            {
-                directory.Create();
-            }
-
-            for (var i = 0; i < 10; i++)
-            {
-                if (_isDisposed)
-                {
-                    return null;
-                }
-
-                try
-                {
-                    var fileStream = File.Open(
-                        file.FullName,
-                        append ? FileMode.Append : FileMode.Create,
-                        FileAccess.Write,
-                        FileShare.Read);
-                    return new StreamWriter(fileStream, Encoding.UTF8)
-                    {
-                        AutoFlush = true,
-                        NewLine = _lineEnd,
-                    };
-                }
-                catch (IOException)
-                {
-                    // 当出现了 IO 错误，通常还有恢复的可能，所以重试。
-                    await Task.Delay(1000).ConfigureAwait(false);
-                    continue;
-                }
-                catch (Exception)
-                {
-                    // 当出现了其他错误，恢复的可能性比较低，所以重试更少次数，更长时间。
-                    await Task.Delay(5000).ConfigureAwait(false);
-                    i++;
-                    continue;
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
         /// 检查字符串是否是行尾符号，如果不是则抛出异常。
         /// </summary>
         /// <param name="lineEnd">行尾符号。</param>
@@ -196,7 +151,7 @@ namespace Walterlv.Logging.IO
             _ => throw new ArgumentException("虽然你可以指定行尾符号，但也只能是 \\n、\\r 或者 \\r\\n。", nameof(lineEnd))
         };
 
-        private bool _isDisposed = false;
+        private bool _isDisposed;
 
         protected virtual void Dispose(bool disposing)
         {
@@ -204,16 +159,46 @@ namespace Walterlv.Logging.IO
             {
                 if (disposing)
                 {
-                    (_infoWriter?.BaseStream as FileStream)?.Dispose();
-                    (_errorWriter?.BaseStream as FileStream)?.Dispose();
+                    _infoMutex?.Dispose();
+                    _errorMutex?.Dispose();
                 }
 
                 _isDisposed = true;
             }
         }
 
+        /// <summary>
+        /// 将日志最后的缓冲写完后关闭日志记录，然后回收所有资源。
+        /// </summary>
         public void Dispose() => Dispose(true);
 
+        /// <summary>
+        /// 将日志最后的缓冲写完后关闭日志记录，然后回收所有资源。
+        /// </summary>
         public void Close() => Dispose(true);
+
+        private static void Write(Mutex mutex, FileInfo file, params string[] texts)
+        {
+            try
+            {
+                mutex.WaitOne();
+            }
+            catch (AbandonedMutexException ex)
+            {
+                // 发现有进程意外退出后，遗留了锁。
+                // 此时已经拿到了锁。
+                // 参见：https://blog.walterlv.com/post/mutex-in-dotnet.html
+                texts = new string[] { $"Unexpected lock on this log file is detected. Abandoned index is {ex.MutexIndex}." }.Concat(texts).ToArray();
+            }
+
+            try
+            {
+                File.AppendAllLines(file.FullName, texts);
+            }
+            finally
+            {
+                mutex.ReleaseMutex();
+            }
+        }
     }
 }
