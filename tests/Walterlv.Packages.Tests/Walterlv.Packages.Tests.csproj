@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Utils\Walterlv.Collections\Walterlv.Collections.csproj" />
+    <ProjectReference Include="..\..\src\Utils\Walterlv.Logger\Walterlv.Logger.csproj" />
   </ItemGroup>
 
 </Project>

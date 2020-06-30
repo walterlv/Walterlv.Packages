@@ -24,6 +24,12 @@ namespace Walterlv.Collections.Threading
         }
 
         /// <summary>
+        /// 获取此刻队列中剩余元素的个数。
+        /// 请注意：因为线程安全问题，此值获取后值即过时，所以获取此值的代码需要自行处理线程安全。
+        /// </summary>
+        public int Count => _queue.Count;
+
+        /// <summary>
         /// 入队。
         /// </summary>
         /// <param name="item">要入队的元素。</param>
