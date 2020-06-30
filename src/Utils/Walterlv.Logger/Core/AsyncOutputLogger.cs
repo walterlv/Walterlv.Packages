@@ -14,6 +14,7 @@ namespace Walterlv.Logging.Core
         private bool _isInitialized;
         private CancellationTokenSource _waitForEmptyCancellationTokenSource = new CancellationTokenSource();
         private TaskCompletionSource<object?>? _waitForEmptyTaskCompletionSource;
+        private object _waitForEmptyLocker = new object();
 
         /// <summary>
         /// 创建 Markdown 格式的日志记录实例。
@@ -120,8 +121,7 @@ namespace Walterlv.Logging.Core
                 }
                 catch (OperationCanceledException)
                 {
-                    var waitLeftCount = _queue.Count;
-                    for (int i = 0; i < waitLeftCount; i++)
+                    while (_queue.Count > 0)
                     {
                         context = await _queue.DequeueAsync().ConfigureAwait(false);
                         await Write(context).ConfigureAwait(false);
@@ -160,15 +160,33 @@ namespace Walterlv.Logging.Core
 
         /// <summary>
         /// 如果派生类需要等待当前尚未完成日志输出的日志全部完成输出，则调用此方法。
-        /// 但请注意：因为并发问题，如果在此方法返回后还有新写的日志，只能靠下次调用此方法来等待了。
+        /// 但请注意：因为并发问题，如果等待期间还有新写入的日志，那么也会一并等待。
         /// </summary>
         /// <returns>可等待对象。</returns>
         protected async Task WaitFlushingAsync()
         {
-            _waitForEmptyTaskCompletionSource = new TaskCompletionSource<object?>();
-            _waitForEmptyCancellationTokenSource.Cancel();
+            if (_waitForEmptyTaskCompletionSource is null)
+            {
+                lock (_waitForEmptyLocker)
+                {
+                    if (_waitForEmptyTaskCompletionSource is null)
+                    {
+                        _waitForEmptyTaskCompletionSource = new TaskCompletionSource<object?>();
+                        _waitForEmptyCancellationTokenSource.Cancel();
+                    }
+                    else if (_waitForEmptyTaskCompletionSource.Task.IsCompleted)
+                    {
+                        return;
+                    }
+                }
+            }
+
             await _waitForEmptyTaskCompletionSource.Task.ConfigureAwait(false);
-            _waitForEmptyTaskCompletionSource = null;
+
+            lock (_waitForEmptyLocker)
+            {
+                _waitForEmptyTaskCompletionSource = null;
+            }
         }
     }
 }
