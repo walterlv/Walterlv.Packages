@@ -37,7 +37,7 @@ namespace Walterlv.Tests.Logging.IO
                 });
                 var task3 = Task.Run(() =>
                 {
-                    Thread.Sleep(300);
+                    Thread.Sleep(100);
                     logger.Message("cccc");
                     logger.WaitFlushingAsync().Wait();
                     Assert.AreEqual(6, logger._logs.Count);
