@@ -70,7 +70,7 @@ namespace Walterlv.Tests.Logging.IO
 
                 var lines = File.ReadAllLines(testFile);
                 Assert.AreEqual(1, lines.Length);
-                Assert.IsTrue(lines[0].Contains("YY", StringComparison.Ordinal));
+                Assert.IsTrue(lines[0].Contains("YY"));
             });
 
             "初始化时，超过行数的文件前面行会删除。".Test(() =>
@@ -85,7 +85,7 @@ namespace Walterlv.Tests.Logging.IO
 
                 var lines = File.ReadAllLines(testFile);
                 Assert.AreEqual(2, lines.Length);
-                Assert.IsTrue(lines[0].Contains("ZZZZZZZZ", StringComparison.Ordinal));
+                Assert.IsTrue(lines[0].Contains("ZZZZZZZZ"));
             });
         }
     }
