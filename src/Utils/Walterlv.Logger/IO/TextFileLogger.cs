@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Walterlv.Logging.Core;
@@ -18,18 +22,20 @@ namespace Walterlv.Logging.IO
         private readonly string _lineEnd;
         private readonly FileInfo _infoLogFile;
         private readonly FileInfo _errorLogFile;
-        private readonly bool _shouldAppendInfo;
-        private readonly bool _shouldAppendError;
         private Mutex? _infoMutex;
         private Mutex? _errorMutex;
+
+        /// <summary>
+        /// 针对文件的拦截器。第一个参数是文件，第二个参数是此文件所对应的日志等级，只有两种值：<see cref="LogLevel.Message"/> 和 <see cref="LogLevel.Error"/>。
+        /// </summary>
+        private Action<FileInfo, LogLevel>? _fileInterceptor;
 
         /// <summary>
         /// 创建文本文件记录日志的 <see cref="TextFileLogger"/> 的新实例。
         /// </summary>
         /// <param name="logFile">日志文件。</param>
-        /// <param name="append">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
         /// <param name="lineEnd">行尾符号。默认是 \n，如果你愿意，也可以改为 \r\n 或者 \r。</param>
-        public TextFileLogger(FileInfo logFile, bool append = false, string lineEnd = "\n")
+        public TextFileLogger(FileInfo logFile, string lineEnd = "\n")
         {
             if (logFile is null)
             {
@@ -39,8 +45,6 @@ namespace Walterlv.Logging.IO
             _infoLogFile = logFile;
             _errorLogFile = logFile;
             _lineEnd = VerifyLineEnd(lineEnd);
-            _shouldAppendInfo = append;
-            _shouldAppendError = append;
         }
 
         /// <summary>
@@ -49,11 +53,8 @@ namespace Walterlv.Logging.IO
         /// </summary>
         /// <param name="infoLogFile">信息和警告的日志文件。</param>
         /// <param name="errorLogFile">错误日志文件。</param>
-        /// <param name="shouldAppendInfo">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
-        /// <param name="shouldAppendError">如果你希望每次创建同文件的新实例时追加到原来日志的末尾，则设为 true；如果希望覆盖之前的日志，则设为 false。</param>
         /// <param name="lineEnd">行尾符号。默认是 \n，如果你愿意，也可以改为 \r\n 或者 \r。</param>
-        public TextFileLogger(FileInfo infoLogFile, FileInfo errorLogFile,
-            bool shouldAppendInfo = false, bool shouldAppendError = true, string lineEnd = "\n")
+        public TextFileLogger(FileInfo infoLogFile, FileInfo errorLogFile, string lineEnd = "\n")
         {
             if (infoLogFile is null)
             {
@@ -69,8 +70,25 @@ namespace Walterlv.Logging.IO
             var areSameFile = string.Equals(infoLogFile.FullName, errorLogFile.FullName, StringComparison.OrdinalIgnoreCase);
             _infoLogFile = infoLogFile;
             _errorLogFile = areSameFile ? infoLogFile : errorLogFile;
-            _shouldAppendInfo = shouldAppendInfo;
-            _shouldAppendError = shouldAppendError;
+        }
+
+        /// <summary>
+        /// 请求在写入首条日志前针对日志文件执行一些代码。代码可能在任一线程中执行，但确保不会并发。
+        /// </summary>
+        /// <param name="fileInterceptor">
+        /// 针对某文件的拦截器。
+        /// 第一个参数是文件，第二个参数是此文件所对应的日志等级，只有两种值，对应此日志文件中能记录信息的最严重范围：
+        ///  - <see cref="LogLevel.Warning"/> 表示此日志最严重只记到警告。
+        ///  - <see cref="LogLevel.Fatal"/> 表示此日志最严重记到崩溃。
+        /// </param>
+        internal void AddInitializeInterceptor(Action<FileInfo, LogLevel> fileInterceptor)
+        {
+            if (_infoMutex != null)
+            {
+                throw new InvalidOperationException("已经有日志开始输出了，不可再继续配置日志行为。");
+            }
+
+            _fileInterceptor += fileInterceptor ?? throw new ArgumentNullException(nameof(fileInterceptor));
         }
 
         /// <inheritdoc />
@@ -81,10 +99,19 @@ namespace Walterlv.Logging.IO
                 return Task.FromResult<object?>(null);
             }
 
+            // 初始化文件写入安全区。
+            var areSameFile = _errorLogFile == _infoLogFile;
             _infoMutex = new Mutex(false, _infoLogFile.FullName);
-            _errorMutex = _errorLogFile == _infoLogFile
+            _errorMutex = areSameFile
                 ? _infoMutex
                 : new Mutex(false, _errorLogFile.FullName);
+
+            // 初始化文件。
+            CriticalInvoke(_infoMutex, _fileInterceptor, interceptor => interceptor?.Invoke(_infoLogFile, LogLevel.Warning));
+            if (!areSameFile)
+            {
+                CriticalInvoke(_errorMutex, _fileInterceptor, interceptor => interceptor?.Invoke(_errorLogFile, LogLevel.Fatal));
+            }
 
             return Task.FromResult<object?>(null);
         }
@@ -99,18 +126,18 @@ namespace Walterlv.Logging.IO
 
             var infoMutex = _infoMutex!;
             var errorMutex = _errorMutex!;
-            var areSameFile = infoMutex == errorMutex;
+            var areSameFile = _errorLogFile == _infoLogFile;
             if (!areSameFile && context.CurrentLevel <= LogLevel.Error)
             {
                 // 写入日志的主要部分。
-                Write(infoMutex, _infoLogFile, BuildLogText(in context, containsExtraInfo: false, _lineEnd));
+                CriticalWrite(infoMutex, _infoLogFile, BuildLogText(in context, containsExtraInfo: false, _lineEnd));
 
                 // 写入日志的扩展部分。
-                Write(errorMutex, _errorLogFile, BuildLogText(in context, context.ExtraInfo != null, _lineEnd));
+                CriticalWrite(errorMutex, _errorLogFile, BuildLogText(in context, context.ExtraInfo != null, _lineEnd));
             }
             else
             {
-                Write(infoMutex, _infoLogFile, BuildLogText(in context, context.ExtraInfo != null, _lineEnd));
+                CriticalWrite(infoMutex, _infoLogFile, BuildLogText(in context, context.ExtraInfo != null, _lineEnd));
             }
         }
 
@@ -153,6 +180,10 @@ namespace Walterlv.Logging.IO
 
         private bool _isDisposed;
 
+        /// <summary>
+        /// 派生类重写此方法以回收非托管资源。注意如果重写了此方法，必须在重写方法中调用基类方法。
+        /// </summary>
+        /// <param name="disposing">如果主动释放资源，请传入 true；如果被动释放资源（析构函数），请传入 false。</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!_isDisposed)
@@ -177,7 +208,7 @@ namespace Walterlv.Logging.IO
         /// </summary>
         public void Close() => Dispose(true);
 
-        private static void Write(Mutex mutex, FileInfo file, params string[] texts)
+        private static void CriticalWrite(Mutex mutex, FileInfo file, params string[] texts)
         {
             try
             {
@@ -200,5 +231,73 @@ namespace Walterlv.Logging.IO
                 mutex.ReleaseMutex();
             }
         }
+
+        private static void CriticalInvoke<T>(Mutex mutex, T? action, Action<T> invoker) where T : MulticastDelegate
+        {
+            if (action is null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            try
+            {
+                mutex.WaitOne();
+            }
+            catch (AbandonedMutexException ex)
+            {
+                // 发现有进程意外退出后，遗留了锁。
+                // 此时已经拿到了锁。
+                // 参见：https://blog.walterlv.com/post/mutex-in-dotnet.html
+                Debug.WriteLine($"Unexpected lock on this log file is detected. Abandoned index is {ex.MutexIndex}.");
+            }
+
+            try
+            {
+                if (action != null)
+                {
+                    var exceptions = new List<Exception>();
+                    foreach (var a in action.GetInvocationList().Cast<T>())
+                    {
+                        try
+                        {
+                            invoker(a);
+                        }
+                        catch (Exception ex)
+                        {
+                            exceptions.Add(ex);
+                        }
+                    }
+                    if (exceptions.Count == 1)
+                    {
+                        ExceptionDispatchInfo.Capture(exceptions[0]).Throw();
+                    }
+                    else if (exceptions.Count > 1)
+                    {
+                        throw new AggregateException(exceptions);
+                    }
+                }
+            }
+            finally
+            {
+                mutex.ReleaseMutex();
+            }
+        }
+
+        /// <summary>
+        /// 不再支持。
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete("不再使用 append 参数决定日志是否保留，请使用 new TextFileLogger().WithWholeFileOverride() 替代。")]
+        public TextFileLogger(FileInfo logFile, bool append, string lineEnd = "\n")
+            : this(logFile, lineEnd) => this.WithWholeFileOverride(append);
+
+        /// <summary>
+        /// 不再支持。
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete("不再使用 append 参数决定日志是否保留，请使用 new TextFileLogger().WithWholeFileOverride() 替代。")]
+        public TextFileLogger(FileInfo infoLogFile, FileInfo errorLogFile,
+            bool shouldAppendInfo, bool shouldAppendError, string lineEnd = "\n")
+            : this(infoLogFile, errorLogFile, lineEnd) => this.WithWholeFileOverride(shouldAppendInfo, shouldAppendError);
     }
 }
