@@ -18,6 +18,8 @@ namespace Walterlv.Logging.Core
                 _queue = new ConcurrentQueue<T>();
             }
 
+            public int Count => _queue.Count;
+
             public void Enqueue(T item)
             {
                 _queue.Enqueue(item);
@@ -40,7 +42,6 @@ namespace Walterlv.Logging.Core
                 while (true)
                 {
                     await _semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
-
                     if (_queue.TryDequeue(out var item))
                     {
                         return item;

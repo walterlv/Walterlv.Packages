@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Walterlv.Logging.Core
@@ -11,6 +12,8 @@ namespace Walterlv.Logging.Core
     {
         private readonly AsyncQueue<LogContext> _queue;
         private bool _isInitialized;
+        private CancellationTokenSource _waitForEmptyCancellationTokenSource = new CancellationTokenSource();
+        private TaskCompletionSource<object?>? _waitForEmptyTaskCompletionSource;
 
         /// <summary>
         /// 创建 Markdown 格式的日志记录实例。
@@ -108,7 +111,33 @@ namespace Walterlv.Logging.Core
         {
             while (true)
             {
-                var context = await _queue.DequeueAsync().ConfigureAwait(false);
+                LogContext context;
+
+                try
+                {
+                    context = await _queue.DequeueAsync(_waitForEmptyCancellationTokenSource.Token).ConfigureAwait(false);
+                    await Write(context).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    var waitLeftCount = _queue.Count;
+                    for (int i = 0; i < waitLeftCount; i++)
+                    {
+                        context = await _queue.DequeueAsync().ConfigureAwait(false);
+                        await Write(context).ConfigureAwait(false);
+                    }
+                }
+
+                if (_queue.Count == 0)
+                {
+                    _waitForEmptyCancellationTokenSource.Dispose();
+                    _waitForEmptyCancellationTokenSource = new CancellationTokenSource();
+                    _waitForEmptyTaskCompletionSource?.SetResult(null);
+                }
+            }
+
+            async Task Write(LogContext context)
+            {
                 if (!_isInitialized)
                 {
                     _isInitialized = true;
@@ -128,5 +157,18 @@ namespace Walterlv.Logging.Core
         /// </summary>
         /// <param name="context">包含一条日志的所有上下文信息。</param>
         protected abstract void OnLogReceived(in LogContext context);
+
+        /// <summary>
+        /// 如果派生类需要等待当前尚未完成日志输出的日志全部完成输出，则调用此方法。
+        /// 但请注意：因为并发问题，如果在此方法返回后还有新写的日志，只能靠下次调用此方法来等待了。
+        /// </summary>
+        /// <returns>可等待对象。</returns>
+        protected async Task WaitFlushingAsync()
+        {
+            _waitForEmptyTaskCompletionSource = new TaskCompletionSource<object?>();
+            _waitForEmptyCancellationTokenSource.Cancel();
+            await _waitForEmptyTaskCompletionSource.Task.ConfigureAwait(false);
+            _waitForEmptyTaskCompletionSource = null;
+        }
     }
 }

@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Threading;
@@ -24,6 +23,8 @@ namespace Walterlv.Logging.IO
         private readonly FileInfo _errorLogFile;
         private Mutex? _infoMutex;
         private Mutex? _errorMutex;
+        private object _disposeLocker = new object();
+        private bool _isDisposed;
 
         /// <summary>
         /// 针对文件的拦截器。第一个参数是文件，第二个参数是此文件所对应的日志等级，只有两种值：<see cref="LogLevel.Message"/> 和 <see cref="LogLevel.Error"/>。
@@ -101,10 +102,8 @@ namespace Walterlv.Logging.IO
 
             // 初始化文件写入安全区。
             var areSameFile = _errorLogFile == _infoLogFile;
-            _infoMutex = new Mutex(false, _infoLogFile.FullName);
-            _errorMutex = areSameFile
-                ? _infoMutex
-                : new Mutex(false, _errorLogFile.FullName);
+            _infoMutex = CreateMutex(_infoLogFile);
+            _errorMutex = areSameFile ? _infoMutex : CreateMutex(_errorLogFile);
 
             // 初始化文件。
             CriticalInvoke(_infoMutex, _fileInterceptor, interceptor => interceptor?.Invoke(_infoLogFile, LogLevel.Warning));
@@ -114,6 +113,10 @@ namespace Walterlv.Logging.IO
             }
 
             return Task.FromResult<object?>(null);
+
+            static Mutex CreateMutex(FileInfo file) => new Mutex(
+                false,
+                Path.GetFullPath(file.FullName).ToLower(CultureInfo.InvariantCulture).Replace(Path.DirectorySeparatorChar, '_'));
         }
 
         /// <inheritdoc />
@@ -178,23 +181,32 @@ namespace Walterlv.Logging.IO
             _ => throw new ArgumentException("虽然你可以指定行尾符号，但也只能是 \\n、\\r 或者 \\r\\n。", nameof(lineEnd))
         };
 
-        private bool _isDisposed;
-
         /// <summary>
         /// 派生类重写此方法以回收非托管资源。注意如果重写了此方法，必须在重写方法中调用基类方法。
         /// </summary>
         /// <param name="disposing">如果主动释放资源，请传入 true；如果被动释放资源（析构函数），请传入 false。</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!_isDisposed)
+            if (_isDisposed)
+            {
+                return;
+            }
+
+            lock (_disposeLocker)
             {
                 if (disposing)
                 {
-                    _infoMutex?.Dispose();
-                    _errorMutex?.Dispose();
+                    try
+                    {
+                        WaitFlushingAsync().Wait();
+                        _infoMutex?.Dispose();
+                        _errorMutex?.Dispose();
+                    }
+                    finally
+                    {
+                        _isDisposed = true;
+                    }
                 }
-
-                _isDisposed = true;
             }
         }
 
@@ -234,11 +246,6 @@ namespace Walterlv.Logging.IO
 
         private static void CriticalInvoke<T>(Mutex mutex, T? action, Action<T> invoker) where T : MulticastDelegate
         {
-            if (action is null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
-
             try
             {
                 mutex.WaitOne();
