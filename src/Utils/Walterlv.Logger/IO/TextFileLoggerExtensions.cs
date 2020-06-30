@@ -14,7 +14,8 @@ namespace Walterlv.Logging.IO
         /// </summary>
         /// <param name="logger">日志实例。</param>
         /// <param name="maxFileSize">大于此大小（字节）时清空日志。</param>
-        public static void WithMaxFileSize(this TextFileLogger logger, long maxFileSize)
+        /// <returns>构造器模式。</returns>
+        public static TextFileLogger WithMaxFileSize(this TextFileLogger logger, long maxFileSize)
         {
             if (maxFileSize <= 0)
             {
@@ -29,6 +30,8 @@ namespace Walterlv.Logging.IO
                     File.WriteAllText(file.FullName, "");
                 }
             });
+
+            return logger;
         }
 
         /// <summary>
@@ -37,7 +40,8 @@ namespace Walterlv.Logging.IO
         /// <param name="logger">日志实例。</param>
         /// <param name="maxLineCount">大于此行数时清空日志的前面行。</param>
         /// <param name="newLineCountAfterLimitReached">清空后应该保留行数。默认为完全不保留。</param>
-        public static void WithMaxLineCount(this TextFileLogger logger, int maxLineCount, int newLineCountAfterLimitReached = 0)
+        /// <returns>构造器模式。</returns>
+        public static TextFileLogger WithMaxLineCount(this TextFileLogger logger, int maxLineCount, int newLineCountAfterLimitReached = 0)
         {
             if (maxLineCount <= 0)
             {
@@ -69,6 +73,8 @@ namespace Walterlv.Logging.IO
                     }
                 }
             });
+
+            return logger;
         }
 
         /// <summary>
@@ -76,12 +82,15 @@ namespace Walterlv.Logging.IO
         /// </summary>
         /// <param name="logger">日志实例。</param>
         /// <param name="override">如果需要覆盖，请设置为 true。</param>
-        public static void WithWholeFileOverride(this TextFileLogger logger, bool @override = true)
+        /// <returns>构造器模式。</returns>
+        public static TextFileLogger WithWholeFileOverride(this TextFileLogger logger, bool @override = true)
         {
             if (@override)
             {
                 logger.AddInitializeInterceptor((file, _) => File.Delete(file.FullName));
             }
+
+            return logger;
         }
 
         /// <summary>
@@ -90,7 +99,8 @@ namespace Walterlv.Logging.IO
         /// <param name="logger">日志实例。</param>
         /// <param name="overrideForInfo">如果你希望首次写入信息日志时覆盖原来日志的整个文件，则设为 true；如果希望保留之前的日志而追加，则设为 false。</param>
         /// <param name="overrideForError">如果你希望首次写入错误日志时覆盖原来日志的整个文件，则设为 true；如果希望保留之前的日志而追加，则设为 false。</param>
-        public static void WithWholeFileOverride(this TextFileLogger logger, bool overrideForInfo, bool overrideForError)
+        /// <returns>构造器模式。</returns>
+        public static TextFileLogger WithWholeFileOverride(this TextFileLogger logger, bool overrideForInfo, bool overrideForError)
         {
             if (overrideForInfo || overrideForError)
             {
@@ -115,6 +125,8 @@ namespace Walterlv.Logging.IO
                     }
                 });
             }
+
+            return logger;
         }
     }
 }
