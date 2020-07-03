@@ -48,9 +48,9 @@ namespace Walterlv.Logging.IO
                 throw new ArgumentException("日志文件限制的行数必须是正整数。", nameof(maxLineCount));
             }
 
-            if (newLineCountAfterLimitReached <= 0)
+            if (newLineCountAfterLimitReached < 0)
             {
-                throw new ArgumentException("日志文件清空后的行数必须是正整数。", nameof(newLineCountAfterLimitReached));
+                throw new ArgumentException("日志文件清空后的行数必须是非负整数。", nameof(newLineCountAfterLimitReached));
             }
 
             if (newLineCountAfterLimitReached > maxLineCount)
@@ -60,16 +60,19 @@ namespace Walterlv.Logging.IO
 
             logger.AddInitializeInterceptor((file, _) =>
             {
-                var lines = File.ReadAllLines(file.FullName);
-                if (file.Exists && lines.Length > maxLineCount)
+                if (file.Exists)
                 {
-                    if (newLineCountAfterLimitReached == 0)
+                    var lines = File.ReadAllLines(file.FullName);
+                    if (lines.Length > maxLineCount)
                     {
-                        File.WriteAllText(file.FullName, "");
-                    }
-                    else
-                    {
-                        File.WriteAllLines(file.FullName, lines.Skip(lines.Length - newLineCountAfterLimitReached));
+                        if (newLineCountAfterLimitReached == 0)
+                        {
+                            File.WriteAllText(file.FullName, "");
+                        }
+                        else
+                        {
+                            File.WriteAllLines(file.FullName, lines.Skip(lines.Length - newLineCountAfterLimitReached));
+                        }
                     }
                 }
             });
