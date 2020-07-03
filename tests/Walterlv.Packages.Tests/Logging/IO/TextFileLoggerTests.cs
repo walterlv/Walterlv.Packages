@@ -58,9 +58,27 @@ namespace Walterlv.Tests.Logging.IO
         [ContractTestCase]
         public void DeleteFileWhenInitialize()
         {
-            "初始化时，超过大小的文件内容会清空。".Test(() =>
+            "使用 With 初始化时，不能要求文件存在。".Test((Func<TextFileLogger, TextFileLogger> extraBuilder) =>
             {
                 const string testFile = "test21.md";
+                if (File.Exists(testFile))
+                {
+                    File.Delete(testFile);
+                }
+
+                var aLogger = extraBuilder(new TextFileLogger(new FileInfo(testFile)));
+                aLogger.Message("YY");
+                aLogger.Close();
+            }).WithArguments(
+                x => x.WithMaxFileSize(100),
+                x => x.WithMaxLineCount(100),
+                x => x.WithMaxLineCount(100, 50),
+                x => x.WithWholeFileOverride()
+            );
+
+            "初始化时，超过大小的文件内容会清空。".Test(() =>
+            {
+                const string testFile = "test22.md";
                 File.WriteAllText(testFile, "XXXXXXXX\n");
 
                 var aLogger = new TextFileLogger(new FileInfo(testFile))
@@ -75,7 +93,7 @@ namespace Walterlv.Tests.Logging.IO
 
             "初始化时，超过行数的文件前面行会删除。".Test(() =>
             {
-                const string testFile = "test22.md";
+                const string testFile = "test23.md";
                 File.WriteAllText(testFile, "XXXXXXXX\n\nYYYYYYYY\nZZZZZZZZ\n");
 
                 var aLogger = new TextFileLogger(new FileInfo(testFile))
