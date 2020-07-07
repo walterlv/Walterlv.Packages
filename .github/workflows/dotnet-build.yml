@@ -24,7 +24,7 @@ jobs:
         with:
           nuget-version: '5.x'
       - name: NuGet restore
-        run: msbuild /t:Restore
+        run: nuget restore
       - name: Build the solution
         run: msbuild /p:Configuration=$env:Configuration
         env:
