@@ -15,7 +15,7 @@ jobs:
       - name: Setup MSBuild.exe
         uses: microsoft/setup-msbuild@2008f912f56e61277eefaac6d1888b750582aa16
       - name: NuGet restore
-        run: msbuild /t:Restore
+        run: nuget restore
       - name: Build the solution
         run: msbuild /p:Configuration=Release
       - name: Push
