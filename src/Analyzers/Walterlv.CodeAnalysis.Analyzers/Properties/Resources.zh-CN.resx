@@ -126,7 +126,10 @@
   <data name="AutoPropertyTitle" xml:space="preserve">
     <value>自动属性</value>
   </data>
+  <data name="AutoPropertyToDependencyPropertyFix" xml:space="preserve">
+    <value>转换为依赖项属性</value>
+  </data>
   <data name="AutoPropertyToNotificationPropertyFix" xml:space="preserve">
-    <value>修改为可通知属性</value>
+    <value>转换为可通知属性</value>
   </data>
 </root>

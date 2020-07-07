@@ -88,6 +88,15 @@ namespace Walterlv.CodeAnalysis.Properties {
         }
         
         /// <summary>
+        ///   查找类似 Change to dependency property 的本地化字符串。
+        /// </summary>
+        internal static string AutoPropertyToDependencyPropertyFix {
+            get {
+                return ResourceManager.GetString("AutoPropertyToDependencyPropertyFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Change to notification property 的本地化字符串。
         /// </summary>
         internal static string AutoPropertyToNotificationPropertyFix {
