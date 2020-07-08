@@ -126,6 +126,9 @@
   <data name="AutoPropertyTitle" xml:space="preserve">
     <value>自动属性</value>
   </data>
+  <data name="AutoPropertyToAttachedPropertyFix" xml:space="preserve">
+    <value>转换为附加属性</value>
+  </data>
   <data name="AutoPropertyToDependencyPropertyFix" xml:space="preserve">
     <value>转换为依赖项属性</value>
   </data>

@@ -126,6 +126,9 @@
   <data name="AutoPropertyTitle" xml:space="preserve">
     <value>Auto property</value>
   </data>
+  <data name="AutoPropertyToAttachedPropertyFix" xml:space="preserve">
+    <value>Change to attached property</value>
+  </data>
   <data name="AutoPropertyToDependencyPropertyFix" xml:space="preserve">
     <value>Change to dependency property</value>
   </data>
