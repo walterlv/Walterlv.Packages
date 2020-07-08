@@ -67,62 +67,22 @@ namespace Walterlv.CodeAnalysis.CodeFixes
             return editor.GetChangedDocument();
         }
 
-        private static void ChangeAutoPropertyToDependencyProperty(DocumentEditor editor, PropertyDeclarationSyntax propertyDeclarationSyntax)
+        private static void ChangeAutoPropertyToDependencyProperty(DocumentEditor editor, PropertyDeclarationSyntax typeSyntax)
         {
-            var ownerType = (propertyDeclarationSyntax.Parent as ClassDeclarationSyntax)?.Identifier.ValueText;
-            if (propertyDeclarationSyntax.AccessorList is null || ownerType is null)
+            var ownerType = (typeSyntax.Parent as ClassDeclarationSyntax)?.Identifier.ValueText;
+            if (typeSyntax.AccessorList is null || ownerType is null)
             {
                 return;
             }
 
             // 生成可通知属性的类型/名称/字段名称。
-            var type = propertyDeclarationSyntax.Type;
-            if (type is NullableTypeSyntax nullableTypeSyntax)
-            {
-                type = nullableTypeSyntax.ElementType;
-            }
-            var whitespaceTrivia = propertyDeclarationSyntax.GetLeadingTrivia().LastOrDefault().Span.Length + 4;
-            var propertyName = propertyDeclarationSyntax.Identifier.ValueText;
+            var propertyType = typeSyntax.Type;
+            propertyType = propertyType is NullableTypeSyntax nullableTypeSyntax ? nullableTypeSyntax.ElementType : propertyType;
+            var propertyName = typeSyntax.Identifier.ValueText;
             var dependencyPropertyName = $"{propertyName}Property";
 
-            // 替换 get/set。
-            var accessorList = propertyDeclarationSyntax.AccessorList.Accessors.OfType<AccessorDeclarationSyntax>();
-            foreach (var accessor in accessorList.Where(x => x.ExpressionBody is null))
-            {
-                if (accessor.Keyword.Text == "get")
-                {
-                    // get => (Type)GetValue(DependencyProperty);
-                    editor.ReplaceNode(accessor,
-                        SyntaxFactory.AccessorDeclaration(
-                            SyntaxKind.GetAccessorDeclaration
-                        )
-                        .WithExpressionBody(
-                            SyntaxFactory.ArrowExpressionClause(
-                                SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken),
-                                SyntaxFactory.ParseExpression($"({type})GetValue({dependencyPropertyName})")
-                            )
-                        )
-                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
-                }
-                else if (accessor.Keyword.Text == "set")
-                {
-                    // set => SetValue(DependencyProperty, value);
-                    editor.ReplaceNode(accessor,
-                        SyntaxFactory.AccessorDeclaration(
-                            SyntaxKind.SetAccessorDeclaration
-                        )
-                        .WithExpressionBody(
-                            SyntaxFactory.ArrowExpressionClause(
-                                SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken),
-                                SyntaxFactory.ParseExpression($"SetValue({dependencyPropertyName}, value)")
-                            )
-                        )
-                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
-                }
-            }
-
             // 增加字段。
-            editor.InsertBefore(propertyDeclarationSyntax, new SyntaxNode[]
+            editor.InsertBefore(typeSyntax, new SyntaxNode[]
             {
                 // private Type _field;
                 SyntaxFactory.FieldDeclaration(
@@ -132,7 +92,7 @@ namespace Walterlv.CodeAnalysis.CodeFixes
                         SyntaxFactory.Token(SyntaxKind.StaticKeyword),
                         SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
                     SyntaxFactory.VariableDeclaration(
-                        type,
+                        SyntaxFactory.ParseTypeName("System.Windows.DependencyProperty"),
                         SyntaxFactory.SeparatedList(new[]
                         {
                             SyntaxFactory.VariableDeclarator(
@@ -140,15 +100,26 @@ namespace Walterlv.CodeAnalysis.CodeFixes
                                 null,
                                 SyntaxFactory.EqualsValueClause(
                                     SyntaxFactory.ParseExpression(@$"System.Windows.DependencyProperty.Register(
-{"".PadLeft(whitespaceTrivia, ' ')}nameof({propertyName}), typeof({type}), typeof({ownerType}),
-{"".PadLeft(whitespaceTrivia, ' ')}new System.Windows.PropertyMetadata(default({type}))")
-                                    .WithAdditionalAnnotations(new SyntaxAnnotation[] { Simplifier.Annotation, Formatter.Annotation })
+{"",4}nameof({propertyName}), typeof({propertyType}), typeof({ownerType}),
+{"",4}new System.Windows.PropertyMetadata(default({propertyType})))")
                                 )
                             )
                         })
                     ),
                     SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+                .WithAdditionalAnnotations(new SyntaxAnnotation[] { Simplifier.Annotation, Formatter.Annotation })
             });
+
+            editor.ReplaceNode(
+                typeSyntax,
+                SyntaxFactory.ParseMemberDeclaration(
+                    $@"{typeSyntax.AttributeLists.ToFullString()}{typeSyntax.Modifiers.ToFullString()}{typeSyntax.Type.ToFullString()}{typeSyntax.Identifier.ToFullString()}
+{{
+    get => ({propertyType})GetValue({dependencyPropertyName});
+    set => SetValue({dependencyPropertyName}, value);
+}}")!
+                .WithAdditionalAnnotations(new SyntaxAnnotation[] { Simplifier.Annotation, Formatter.Annotation })
+                );
         }
     }
 }
