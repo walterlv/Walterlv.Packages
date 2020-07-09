@@ -62,7 +62,7 @@ namespace Walterlv.CodeAnalysis.CodeFixes
                 SyntaxFactory.ParseMemberDeclaration(
                     $@"{propertySyntax.AttributeLists.ToFullString()}{propertySyntax.Modifiers.ToFullString()}{propertySyntax.Type.ToFullString()}{propertySyntax.Identifier.ToFullString()}
 {{
-    get => GetValue({fieldName});
+    get => {fieldName};
     set => SetValue(ref {fieldName}, value);
 }}")!
                 .WithAdditionalAnnotations(new SyntaxAnnotation[] { Simplifier.Annotation, Formatter.Annotation })
