@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP3_0 || NETCOREAPP3_1 || NETCOREAPP5_1 || NET5_0 || NET6_0
+﻿#if NETCOREAPP3_0 || NETCOREAPP3_1 || NETCOREAPP5_0 || NET5_0 || NET6_0
 // 新框架都包含 Nullable Attributes。
 #else
 namespace System.Diagnostics.CodeAnalysis

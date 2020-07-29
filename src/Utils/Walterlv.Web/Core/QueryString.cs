@@ -8,7 +8,7 @@ namespace Walterlv.Web.Core
 {
     internal class QueryString
     {
-#if NETCOREAPP3_0 || NETCOREAPP3_1 || NETCOREAPP5_1 || NET5_0 || NET6_0
+#if NETCOREAPP3_0 || NETCOREAPP3_1 || NETCOREAPP5_0 || NET5_0 || NET6_0
         [return: NotNullIfNotNull("query")]
 #endif
         public static string? Serialize(object? query, string? prefix = "?")
