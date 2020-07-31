@@ -66,7 +66,7 @@ namespace Walterlv.Logging.Markdown
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Obsolete("不再使用 append 参数决定日志是否保留，请使用 new MarkdownLogger().WithWholeFileOverride() 替代。")]
-        public MarkdownLogger(FileInfo logFile, bool append = false, string lineEnd = "\n")
+        public MarkdownLogger(FileInfo logFile, bool append, string lineEnd)
             : base(logFile, append, lineEnd)
         {
         }
@@ -77,7 +77,7 @@ namespace Walterlv.Logging.Markdown
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Obsolete("不再使用 append 参数决定日志是否保留，请使用 new MarkdownLogger().WithWholeFileOverride() 替代。")]
         public MarkdownLogger(FileInfo infoLogFile, FileInfo errorLogFile,
-            bool shouldAppendInfo, bool shouldAppendError, string lineEnd = "\n")
+            bool shouldAppendInfo, bool shouldAppendError, string lineEnd)
             : base(infoLogFile, errorLogFile, shouldAppendInfo, shouldAppendError, lineEnd)
         {
         }
