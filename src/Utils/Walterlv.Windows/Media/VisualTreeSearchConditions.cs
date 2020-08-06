@@ -25,6 +25,11 @@ namespace Walterlv.Windows.Media
         /// <returns>构造器模式。</returns>
         public VisualTreeSearchConditions NameIs(string name)
         {
+            if (name is null)
+            {
+                throw new ArgumentNullException(nameof(name), "使用名称判定元素是否符合时，不应传入 null。如果不限名称，应该不要调用此方法；如果未指定名称，应该使用空字符串（即 Name 属性的默认值）。");
+            }
+
             _conditions += () => (_self as FrameworkElement)?.Name?.Equals(name, StringComparison.Ordinal) is true;
             return this;
         }
@@ -39,7 +44,7 @@ namespace Walterlv.Windows.Media
             where T : Visual
         {
             var v = VisualTreeHelper.GetParent(_self);
-            _conditions += () => v is T && (v as FrameworkElement)?.Name?.Equals(name, StringComparison.Ordinal) is true;
+            _conditions += () => v is T && (name is null || (v as FrameworkElement)?.Name?.Equals(name, StringComparison.Ordinal) is true);
             return this;
         }
 
@@ -58,7 +63,7 @@ namespace Walterlv.Windows.Media
                 for (var i = 0; i < count; i++)
                 {
                     var v = VisualTreeHelper.GetChild(_self, i);
-                    var result = v is T && (v as FrameworkElement)?.Name?.Equals(name, StringComparison.Ordinal) is true;
+                    var result = v is T && (name is null || (v as FrameworkElement)?.Name?.Equals(name, StringComparison.Ordinal) is true);
                     if (result)
                     {
                         return true;
