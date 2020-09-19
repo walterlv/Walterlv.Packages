@@ -42,13 +42,23 @@ namespace Walterlv.Windows.Interop
             // 设置窗口样式为子窗口。这里的样式值与 HwndHost/HwndSource 成对时设置的值一模一样。
             _originalChildWindowStyles = (WindowStyles)User32.GetWindowLong(Handle, GetWindowLongIndexes.GWL_STYLE);
             User32.SetWindowLong(Handle, GetWindowLongIndexes.GWL_STYLE,
-                (IntPtr)(WindowStyles.WS_CHILDWINDOW | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPCHILDREN));
+                (IntPtr)(_originalChildWindowStyles | WindowStyles.WS_CHILDWINDOW));
         }
 
         /// <summary>
         /// 获取包装的窗口的句柄。
         /// </summary>
         public IntPtr Handle { get; }
+
+        /// <summary>
+        /// 当子窗口被捕获后发生，你可以对此窗口通过 Win32 函数进行更多的处理。
+        /// </summary>
+        public event EventHandler<Win32WindowEventArgs>? Captured;
+
+        /// <summary>
+        /// 当子窗口被释放后发生，你可以对此窗口通过 Win32 函数进行更多的处理。
+        /// </summary>
+        public event EventHandler<Win32WindowEventArgs>? Released;
 
         /// <summary>
         /// 获取或设置当前窗口是否已被捕获和自动管理中。
@@ -69,6 +79,7 @@ namespace Walterlv.Windows.Interop
 
         private async void OnIsCapturedChanged(bool oldValue, bool newValue)
         {
+            bool? captured = null;
             if (newValue)
             {
                 if (IsVisible)
@@ -81,6 +92,7 @@ namespace Walterlv.Windows.Interop
                     await ShowChildAsync().ConfigureAwait(true);
                     IsChildStyle = true;
                     await ArrangeChildAsync().ConfigureAwait(true);
+                    captured = true;
                 }
             }
             else
@@ -88,12 +100,22 @@ namespace Walterlv.Windows.Interop
                 await ArrangeChildAsync().ConfigureAwait(true);
                 await ShowChildAsync().ConfigureAwait(true);
                 IsChildStyle = false;
+                captured = false;
             }
 
             // 有些程序窗口大小不变时，无论如何刷新渲染都没用。因此必须强制通知窗口大小已经改变。
             // 实际情况是虽然窗口大小不变，但客户区大小变化了，所以本就应该刷新布局。
             await Task.Delay(1).ConfigureAwait(false);
             User32.SendMessage(Handle, WindowsMessages.WM_SIZE, UIntPtr.Zero, IntPtr.Zero);
+
+            if (captured is true)
+            {
+                Captured?.Invoke(this, new Win32WindowEventArgs(Handle));
+            }
+            else if (captured is false)
+            {
+                Released?.Invoke(this, new Win32WindowEventArgs(Handle));
+            }
         }
 
         private async void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -292,10 +314,8 @@ namespace Walterlv.Windows.Interop
         /// <param name="y">屏幕坐标 Y（像素单位）。</param>
         private void RawMoveWindow(int x, int y)
         {
-            if (User32.GetWindowRect(Handle, out var rect))
-            {
-                User32.MoveWindow(Handle, x, y, rect.right - rect.left, rect.bottom - rect.top, true);
-            }
+            User32.SetWindowPos(Handle, IntPtr.Zero, x, y, 0, 0,
+                SetWindowPosFlags.SWP_NOSIZE | SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_NOACTIVATE);
         }
     }
 }
