@@ -236,7 +236,7 @@ namespace Walterlv.Logging.IO
 
             try
             {
-                File.AppendAllLines(file.FullName, texts);
+                CriticalWriteLines(file.FullName, texts);
             }
             finally
             {
@@ -306,5 +306,31 @@ namespace Walterlv.Logging.IO
         public TextFileLogger(FileInfo infoLogFile, FileInfo errorLogFile,
             bool shouldAppendInfo, bool shouldAppendError, string lineEnd = "\n")
             : this(infoLogFile, errorLogFile, lineEnd) => this.WithWholeFileOverride(shouldAppendInfo, shouldAppendError);
+
+        private static async void CriticalWriteLines(string fileName, IEnumerable<string> lines, int tryCount = 32)
+        {
+            for (var i = 0; i < tryCount; i++)
+            {
+                try
+                {
+                    File.AppendAllLines(fileName, lines);
+                }
+                catch (IOException ex)
+                {
+                    const int HR_ERROR_HANDLE_DISK_FULL = unchecked((int)0x80070027);
+                    const int HR_ERROR_DISK_FULL = unchecked((int)0x80070070);
+                    if (ex.HResult == HR_ERROR_HANDLE_DISK_FULL || ex.HResult == HR_ERROR_DISK_FULL)
+                    {
+                        // 磁盘已满，不再写入。
+                        return;
+                    }
+                    else
+                    {
+                        // 其他异常，重试。
+                        await Task.Delay(100).ConfigureAwait(false);
+                    }
+                }
+            }
+        }
     }
 }
