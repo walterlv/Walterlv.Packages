@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace Walterlv.Logging.IO
 {
@@ -93,7 +94,7 @@ namespace Walterlv.Logging.IO
         {
             if (@override)
             {
-                logger.AddInitializeInterceptor((file, _) => File.Delete(file.FullName));
+                logger.AddInitializeInterceptor((file, _) => TryDo<IOException>(() => File.Delete(file.FullName)));
             }
 
             return logger;
@@ -119,14 +120,14 @@ namespace Walterlv.Logging.IO
                         {
                             if (overrideForError)
                             {
-                                File.WriteAllText(file.FullName, "");
+                                TryDo<IOException>(() => File.WriteAllText(file.FullName, ""));
                             }
                         }
                         else if (level == LogLevel.Warning)
                         {
                             if (overrideForInfo)
                             {
-                                File.WriteAllText(file.FullName, "");
+                                TryDo<IOException>(() => File.WriteAllText(file.FullName, ""));
                             }
                         }
                     }
@@ -134,6 +135,28 @@ namespace Walterlv.Logging.IO
             }
 
             return logger;
+        }
+
+        private static void TryDo<TException>(Action action, int tryCount = 32) where TException : Exception
+        {
+            for (int i = 0; i < tryCount; i++)
+            {
+                try
+                {
+                    action();
+                    Thread.Sleep(100);
+                }
+                catch (TException)
+                {
+                    // 那么只需重试便好，因为此库不长期占用文件。
+                    //  - 删除文件
+                    //  - 重写文件
+                    if (i + 1 >= tryCount)
+                    {
+                        throw;
+                    }
+                }
+            }
         }
     }
 }
