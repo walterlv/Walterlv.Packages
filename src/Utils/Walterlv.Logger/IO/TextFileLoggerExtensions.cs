@@ -139,12 +139,11 @@ namespace Walterlv.Logging.IO
 
         private static void TryDo<TException>(Action action, int tryCount = 32) where TException : Exception
         {
-            for (int i = 0; i < tryCount; i++)
+            for (var i = 0; i < tryCount; i++)
             {
                 try
                 {
                     action();
-                    Thread.Sleep(100);
                 }
                 catch (TException)
                 {
@@ -155,6 +154,7 @@ namespace Walterlv.Logging.IO
                     {
                         throw;
                     }
+                    Thread.Sleep(10);
                 }
             }
         }
