@@ -151,6 +151,10 @@ namespace Walterlv.Logging.IO
                     // 那么只需重试便好，因为此库不长期占用文件。
                     //  - 删除文件
                     //  - 重写文件
+                    if (i + 1 >= tryCount)
+                    {
+                        throw;
+                    }
                 }
             }
         }
