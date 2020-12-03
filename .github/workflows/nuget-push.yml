@@ -12,11 +12,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Setup
         uses: actions/setup-dotnet@v1
-      - name: Setup MSBuild.exe
-        uses: microsoft/setup-msbuild@2008f912f56e61277eefaac6d1888b750582aa16
-      - name: NuGet restore
-        run: nuget restore
       - name: Build the solution
-        run: msbuild /p:Configuration=Release
+        run: msbuild /p:Configuration=Release -restore
       - name: Push
         run: dotnet nuget push .\bin\Release\*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NuGetAPIKey }} --skip-duplicate --no-symbols 1
