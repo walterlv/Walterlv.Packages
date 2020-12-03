@@ -314,6 +314,7 @@ namespace Walterlv.Logging.IO
                 try
                 {
                     File.AppendAllLines(fileName, lines);
+                    return;
                 }
                 catch (IOException ex)
                 {
