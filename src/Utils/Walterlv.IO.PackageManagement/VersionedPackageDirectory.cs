@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
-using System.Text;
 
 namespace Walterlv.IO.PackageManagement
 {
@@ -40,7 +38,7 @@ namespace Walterlv.IO.PackageManagement
         /// </summary>
         /// <param name="sourceDirectory">要移动的文件夹。</param>
         /// <param name="version">移动文件夹需要移动到此版本号对应的包文件夹中。</param>
-        public void Move(string sourceDirectory, string version) => Move(
+        public IOResult Move(string sourceDirectory, string version) => Move(
             VerifyDirectoryArgument(sourceDirectory, nameof(sourceDirectory)), version);
 
         /// <summary>
@@ -48,7 +46,7 @@ namespace Walterlv.IO.PackageManagement
         /// </summary>
         /// <param name="sourceDirectory">要移动的文件夹。</param>
         /// <param name="version">移动文件夹需要移动到此版本号对应的包文件夹中。</param>
-        public void MoveAsCurrent(string sourceDirectory, string version) => MoveAsCurrent(
+        public IOResult MoveAsCurrent(string sourceDirectory, string version) => MoveAsCurrent(
             VerifyDirectoryArgument(sourceDirectory, nameof(sourceDirectory)), version);
 
         /// <summary>
@@ -56,7 +54,7 @@ namespace Walterlv.IO.PackageManagement
         /// </summary>
         /// <param name="sourceDirectory">要复制的文件夹。</param>
         /// <param name="version">复制文件夹需要复制到此版本号对应的包文件夹中。</param>
-        public void Copy(string sourceDirectory, string version) => Copy(
+        public IOResult Copy(string sourceDirectory, string version) => Copy(
             VerifyDirectoryArgument(sourceDirectory, nameof(sourceDirectory)), version);
 
         /// <summary>
@@ -64,7 +62,7 @@ namespace Walterlv.IO.PackageManagement
         /// </summary>
         /// <param name="sourceDirectory">要复制的文件夹。</param>
         /// <param name="version">复制文件夹需要复制到此版本号对应的包文件夹中。</param>
-        public void CopyAsCurrent(string sourceDirectory, string version) => CopyAsCurrent(
+        public IOResult CopyAsCurrent(string sourceDirectory, string version) => CopyAsCurrent(
             VerifyDirectoryArgument(sourceDirectory, nameof(sourceDirectory)), version);
 
         /// <summary>
@@ -72,10 +70,10 @@ namespace Walterlv.IO.PackageManagement
         /// </summary>
         /// <param name="sourceDirectory">要移动的文件夹。</param>
         /// <param name="version">移动文件夹需要移动到此版本号对应的包文件夹中。</param>
-        public void Move(DirectoryInfo sourceDirectory, string version)
+        public IOResult Move(DirectoryInfo sourceDirectory, string version)
         {
             var targetDirectory = GetVersionDirectory(version, false);
-            PackageDirectory.Move(sourceDirectory, targetDirectory, DirectoryOverwriteStrategy.Overwrite);
+            return PackageDirectory.Move(sourceDirectory, targetDirectory, DirectoryOverwriteStrategy.Overwrite);
         }
 
         /// <summary>
@@ -83,12 +81,16 @@ namespace Walterlv.IO.PackageManagement
         /// </summary>
         /// <param name="sourceDirectory">要移动的文件夹。</param>
         /// <param name="version">移动文件夹需要移动到此版本号对应的包文件夹中。</param>
-        public void MoveAsCurrent(DirectoryInfo sourceDirectory, string version)
+        public IOResult MoveAsCurrent(DirectoryInfo sourceDirectory, string version)
         {
+            var logger = new IOResult();
             var targetDirectory = GetVersionDirectory(version, false);
             var currentDirectory = GetVersionDirectory(CurrentDirectoryName, false);
-            PackageDirectory.Move(sourceDirectory, targetDirectory, DirectoryOverwriteStrategy.Overwrite);
-            PackageDirectory.Link(currentDirectory, targetDirectory);
+            var result1 = PackageDirectory.Move(sourceDirectory, targetDirectory, DirectoryOverwriteStrategy.Overwrite);
+            var result2 = PackageDirectory.Link(currentDirectory, targetDirectory);
+            logger.Append(result1);
+            logger.Append(result2);
+            return logger;
         }
 
         /// <summary>
@@ -96,10 +98,10 @@ namespace Walterlv.IO.PackageManagement
         /// </summary>
         /// <param name="sourceDirectory">要复制的文件夹。</param>
         /// <param name="version">复制文件夹需要复制到此版本号对应的包文件夹中。</param>
-        public void Copy(DirectoryInfo sourceDirectory, string version)
+        public IOResult Copy(DirectoryInfo sourceDirectory, string version)
         {
             var targetDirectory = GetVersionDirectory(version, false);
-            PackageDirectory.Copy(sourceDirectory, targetDirectory, DirectoryOverwriteStrategy.Overwrite);
+            return PackageDirectory.Copy(sourceDirectory, targetDirectory, DirectoryOverwriteStrategy.Overwrite);
         }
 
         /// <summary>
@@ -107,12 +109,16 @@ namespace Walterlv.IO.PackageManagement
         /// </summary>
         /// <param name="sourceDirectory">要复制的文件夹。</param>
         /// <param name="version">复制文件夹需要复制到此版本号对应的包文件夹中。</param>
-        public void CopyAsCurrent(DirectoryInfo sourceDirectory, string version)
+        public IOResult CopyAsCurrent(DirectoryInfo sourceDirectory, string version)
         {
+            var logger = new IOResult();
             var targetDirectory = GetVersionDirectory(version, false);
             var currentDirectory = GetVersionDirectory(CurrentDirectoryName, false);
-            PackageDirectory.Copy(sourceDirectory, targetDirectory, DirectoryOverwriteStrategy.Overwrite);
-            PackageDirectory.Link(currentDirectory, targetDirectory);
+            var result1 = PackageDirectory.Copy(sourceDirectory, targetDirectory, DirectoryOverwriteStrategy.Overwrite);
+            var result2 = PackageDirectory.Link(currentDirectory, targetDirectory);
+            logger.Append(result1);
+            logger.Append(result2);
+            return logger;
         }
 
         /// <summary>
@@ -121,10 +127,10 @@ namespace Walterlv.IO.PackageManagement
         /// 如果当前版本只是某个版本的副本（通常是因为管理分区在 NTFS 分区），则不会收到影响。
         /// </summary>
         /// <param name="version">要删除的版本号。</param>
-        public void Delete(string version)
+        public IOResult Delete(string version)
         {
             var directory = GetVersionDirectory(version, false);
-            PackageDirectory.Delete(directory);
+            return PackageDirectory.Delete(directory);
         }
 
         /// <summary>
@@ -132,21 +138,24 @@ namespace Walterlv.IO.PackageManagement
         /// 此操作会导致当前版本联接到此版本的文件夹中。
         /// </summary>
         /// <param name="version">要保留的版本号。</param>
-        public void DeleteOthers(string version)
+        public IOResult DeleteOthers(string version)
         {
+            var logger = new IOResult();
             foreach (var directory in _rootDirectory.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
             {
                 if (directory.Name != version && CurrentDirectoryName.Equals(directory.Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    PackageDirectory.Delete(directory);
+                    var result = PackageDirectory.Delete(directory);
+                    logger.Append(result);
                 }
             }
+            return logger;
         }
 
         /// <summary>
         /// 删除所有版本的包文件夹，然后删除此包文件夹自身。
         /// </summary>
-        public void DeleteAll() => PackageDirectory.Delete(_rootDirectory);
+        public IOResult DeleteAll() => PackageDirectory.Delete(_rootDirectory);
 
         /// <summary>
         /// 获取特定版本的目录信息。

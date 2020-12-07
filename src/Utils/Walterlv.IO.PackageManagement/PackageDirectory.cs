@@ -160,8 +160,21 @@ namespace Walterlv.IO.PackageManagement
 
                 try
                 {
-                    Directory.CreateDirectory(Path.GetDirectoryName(targetDirectory.FullName));
-                    Directory.Move(sourceDirectory.FullName, targetDirectory.FullName);
+                    logger.Log("无论是否存在，都创建文件夹。");
+                    Directory.CreateDirectory(targetDirectory.FullName);
+
+                    foreach (var file in sourceDirectory.EnumerateFiles())
+                    {
+                        var targetFilePath = Path.Combine(targetDirectory.FullName, file.Name);
+                        file.MoveTo(targetFilePath);
+                    }
+
+                    foreach (DirectoryInfo directory in sourceDirectory.EnumerateDirectories())
+                    {
+                        var targetDirectoryPath = Path.Combine(targetDirectory.FullName, directory.Name);
+                        var moveResult = Move(directory, new DirectoryInfo(targetDirectoryPath));
+                        logger.Append(moveResult);
+                    }
                 }
                 catch (Exception ex)
                 {
