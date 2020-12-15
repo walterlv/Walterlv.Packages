@@ -108,7 +108,7 @@ namespace Walterlv.Logging.Core
         /// <summary>
         /// 开始异步输出日志。
         /// </summary>
-        private async void StartLogging()
+        private async Task StartLogging()
         {
             while (true)
             {

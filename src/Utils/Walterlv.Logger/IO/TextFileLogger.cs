@@ -307,7 +307,7 @@ namespace Walterlv.Logging.IO
             bool shouldAppendInfo, bool shouldAppendError, string lineEnd = "\n")
             : this(infoLogFile, errorLogFile, lineEnd) => this.WithWholeFileOverride(shouldAppendInfo, shouldAppendError);
 
-        private static async void CriticalWriteLines(string fileName, IEnumerable<string> lines, int tryCount = 32)
+        private static async Task CriticalWriteLines(string fileName, IEnumerable<string> lines, int tryCount = 32)
         {
             for (var i = 0; i < tryCount; i++)
             {

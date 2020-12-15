@@ -94,7 +94,13 @@ namespace Walterlv.Logging.IO
         {
             if (@override)
             {
-                logger.AddInitializeInterceptor((file, _) => TryDo<IOException>(() => File.Delete(file.FullName)));
+                logger.AddInitializeInterceptor((file, _) => TryDo<IOException>(() =>
+                {
+                    if (File.Exists(file.FullName))
+                    {
+                        File.Delete(file.FullName);
+                    }
+                }));
             }
 
             return logger;
