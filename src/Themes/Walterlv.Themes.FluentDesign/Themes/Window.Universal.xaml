@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:themes="clr-namespace:Walterlv.Windows.Themes">
+                    xmlns:themes="clr-namespace:Walterlv.Windows.Themes" xmlns:c="clr-namespace:Walterlv.Windows.Controls">
     <Style x:Key="Style.Window.Universal" TargetType="Window">
         <Style.Resources>
             <SolidColorBrush x:Key="Brush.TitleBar.Foreground" Color="{Binding Path=(themes:UniversalWindowStyle.TitleBar).ForegroundColor, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
@@ -31,8 +31,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Window">
-                    <Border x:Name="FrameBorder" SnapsToDevicePixels="True"
-                            BorderBrush="{StaticResource Brush.Window.Frame}">
+                    <c:ClientAreaBorder x:Name="FrameBorder" SnapsToDevicePixels="True"
+                                        BorderBrush="{StaticResource Brush.Window.Frame}">
                         <Grid x:Name="RootGrid" Margin="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
                             <AdornerDecorator>
                                 <ContentPresenter />
@@ -135,10 +135,9 @@
                                 </StackPanel>
                             </Grid>
                         </Grid>
-                    </Border>
+                    </c:ClientAreaBorder>
                     <ControlTemplate.Triggers>
                         <Trigger Property="WindowState" Value="Maximized">
-                            <Setter TargetName="FrameBorder" Property="Padding" Value="8" />
                             <Setter TargetName="FrameBorder" Property="BorderThickness" Value="0" />
                             <Setter TargetName="TitleBarPanel" Property="Height" Value="32" />
                             <Setter TargetName="MaximizeButton" Property="Visibility" Value="Collapsed" />
