@@ -45,11 +45,11 @@ namespace Walterlv.CodeAnalysis.CodeFixes
             // 增加字段。
             editor.InsertBefore(propertySyntax, new SyntaxNode[]
             {
-                // private Type _field;
+                // public static readonly DependencyProperty XxxProperty;
                 SyntaxFactory.FieldDeclaration(
                     new SyntaxList<AttributeListSyntax>(),
                     new SyntaxTokenList(
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                         SyntaxFactory.Token(SyntaxKind.StaticKeyword),
                         SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
                     SyntaxFactory.VariableDeclaration(
