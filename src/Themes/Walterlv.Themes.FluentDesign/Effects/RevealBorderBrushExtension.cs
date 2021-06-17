@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Walterlv.Windows.Effects
 {
@@ -32,12 +35,15 @@ namespace Walterlv.Windows.Effects
 
         public double Opacity { get; set; } = 1.0;
 
+        /// <summary>
+        /// 高亮半径。
+        /// </summary>
         public double Radius { get; set; } = 100.0;
 
         public override object? ProvideValue(IServiceProvider serviceProvider)
         {
             // 如果没有服务，则直接返回。
-            if (!(serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget service))
+            if (serviceProvider.GetService(typeof(IProvideValueTarget)) is not IProvideValueTarget service)
             {
                 return null;
             }
@@ -48,7 +54,7 @@ namespace Walterlv.Windows.Effects
                 return this;
             }
 
-            if (!(service.TargetObject is FrameworkElement element))
+            if (service.TargetObject is not FrameworkElement element)
             {
                 return this;
             }
@@ -62,27 +68,47 @@ namespace Walterlv.Windows.Effects
             return brush;
         }
 
-        private Brush CreateBrush(UIElement rootVisual, FrameworkElement element)
-        {
-            var brush = CreateRadialGradientBrush();
-            rootVisual.MouseMove += OnMouseMove;
-            return brush;
-
-            void OnMouseMove(object sender, MouseEventArgs e) => UpdateBrush(brush, e.GetPosition(element));
-        }
-
         private Brush CreateGlobalBrush(FrameworkElement element)
         {
             var brush = CreateRadialGradientBrush();
             if (GlobalRevealingElements is null)
             {
-                CompositionTarget.Rendering -= OnRendering;
-                CompositionTarget.Rendering += OnRendering;
+                if (element.IsLoaded)
+                {
+                    EnableReveal();
+                }
+                else
+                {
+                    element.Loaded += Element_Loaded;
+                }
+                element.Unloaded += Element_Unloaded;
+
                 GlobalRevealingElements = new Dictionary<RadialGradientBrush, WeakReference<FrameworkElement>>();
             }
 
             GlobalRevealingElements.Add(brush, new WeakReference<FrameworkElement>(element));
             return brush;
+        }
+
+        private void Element_Loaded(object sender, RoutedEventArgs e)
+        {
+            EnableReveal();
+        }
+
+        private void Element_Unloaded(object sender, RoutedEventArgs e)
+        {
+            DisableReveal();
+        }
+
+        private void EnableReveal()
+        {
+            CompositionTarget.Rendering -= OnRendering;
+            CompositionTarget.Rendering += OnRendering;
+        }
+
+        private void DisableReveal()
+        {
+            CompositionTarget.Rendering -= OnRendering;
         }
 
         private void OnRendering(object? sender, EventArgs e)
@@ -99,7 +125,7 @@ namespace Walterlv.Windows.Effects
                 var weak = pair.Value;
                 if (weak.TryGetTarget(out var element))
                 {
-                    Reveal(brush, element);
+                    element.Dispatcher.InvokeAsync(() => Reveal(brush, element), DispatcherPriority.Normal);
                 }
                 else
                 {
@@ -112,7 +138,19 @@ namespace Walterlv.Windows.Effects
                 GlobalRevealingElements.Remove(brush);
             }
 
-            void Reveal(RadialGradientBrush brush, IInputElement element) => UpdateBrush(brush, Mouse.GetPosition(element));
+            void Reveal(RadialGradientBrush brush, IInputElement element)
+            {
+                if (element is FrameworkElement fe && PresentationSource.FromVisual(fe) is HwndSource source
+                    && IsWindow(source.Handle))
+                {
+                    var p = Mouse.GetPosition(element);
+                    UpdateBrush(brush, p);
+                }
+                else
+                {
+                    UpdateBrush(brush, new Point(double.NegativeInfinity, double.NegativeInfinity));
+                }
+            }
         }
 
         private void UpdateBrush(RadialGradientBrush brush, Point origin)
@@ -163,5 +201,8 @@ namespace Walterlv.Windows.Effects
 
             return false;
         }
+
+        [DllImport("user32", ExactSpelling = true)]
+        private static extern bool IsWindow(IntPtr hwnd);
     }
 }
