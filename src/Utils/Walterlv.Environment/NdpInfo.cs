@@ -236,7 +236,7 @@ namespace Walterlv
                 return ReadCore(ndpKey);
             }
 
-            Dictionary<string, NdpInfo> ReadCore(RegistryKey ndpKey)
+            static Dictionary<string, NdpInfo> ReadCore(RegistryKey? ndpKey)
             {
                 // 保存读取到的所有 .NET Framework 可共存分支及其对应的就地更新版本号。
                 var dictionary = new Dictionary<string, NdpInfo>();
@@ -261,10 +261,10 @@ namespace Walterlv
                             continue;
                         }
 
-                        var name = (string)versionKey.GetValue("Version", "");
-                        var sp = (int)versionKey.GetValue("SP", 0);
-                        var install = versionKey.GetValue("Install", "").ToString();
-                        var release = (int)versionKey.GetValue("Release", 0);
+                        var name = (string?)versionKey.GetValue("Version", "") ?? "";
+                        var sp = (int?)versionKey.GetValue("SP", 0) ?? 0;
+                        var install = versionKey.GetValue("Install", "")?.ToString();
+                        var release = (int?)versionKey.GetValue("Release", 0) ?? 0;
 
                         // 尝试获取只有一种发行类型的 .NET Framework。
                         if (string.IsNullOrEmpty(install))
@@ -295,14 +295,14 @@ namespace Walterlv
                                 continue;
                             }
 
-                            name = (string)subKey.GetValue("Version", "");
+                            name = (string?)subKey.GetValue("Version", "") ?? "";
                             if (!string.IsNullOrEmpty(name))
                             {
-                                sp = (int)subKey.GetValue("SP", 0);
+                                sp = (int?)subKey.GetValue("SP", 0) ?? 0;
                             }
 
-                            install = subKey.GetValue("Install", "").ToString();
-                            release = (int)subKey.GetValue("Release", 0);
+                            install = subKey.GetValue("Install", "")?.ToString();
+                            release = (int?)subKey.GetValue("Release", 0) ?? 0;
                             if (string.IsNullOrEmpty(install))
                             {
                                 // 现在如果拿不到，也不用再拿了，因为目前还没有出现过这种情况，鬼知道将来微软会怎么玩。
