@@ -40,7 +40,7 @@ namespace Walterlv.Windows.Interop
             PreviewKeyDown += OnKeyDown;
 
             // 设置窗口样式为子窗口。这里的样式值与 HwndHost/HwndSource 成对时设置的值一模一样。
-            _originalChildWindowStyles = (WindowStyles)User32.GetWindowLong(Handle, GetWindowLongIndexes.GWL_STYLE);
+            _originalChildWindowStyles = (WindowStyles)User32.GetWindowLong(Handle, GetWindowLongIndexes.GWL_STYLE).SafeToInt32();
             User32.SetWindowLong(Handle, GetWindowLongIndexes.GWL_STYLE,
                 (IntPtr)(_originalChildWindowStyles | WindowStyles.WS_CHILDWINDOW));
         }
@@ -195,7 +195,7 @@ namespace Walterlv.Windows.Interop
         {
             get
             {
-                var style = (WindowStyles)User32.GetWindowLong(Handle, GetWindowLongIndexes.GWL_STYLE);
+                var style = (WindowStyles)User32.GetWindowLong(Handle, GetWindowLongIndexes.GWL_STYLE).SafeToInt32();
                 return (int)(style & WindowStyles.WS_CHILDWINDOW) != 0;
             }
             set
