@@ -6,6 +6,7 @@
     <TargetFramework>net472</TargetFramework>
     <RootNamespace>Walterlv.Analyzers</RootNamespace>
     <AssemblyName>Walterlv.Analyzers</AssemblyName>
+    <OutputPath>..\..\bin\$(Configuration)\VSExtensions\Walterlv.Analyzers.VS2019\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup>
