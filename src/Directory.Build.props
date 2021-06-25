@@ -20,7 +20,7 @@
     <PackageProjectUrl>https://github.com/walterlv/Walterlv.Packages</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.19099-alpha" PrivateAssets="All" />
+    <PackageReference Include="dotnetCampus.SourceYard" Version="0.1.19369-alpha" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
   </ItemGroup>
 </Project>
