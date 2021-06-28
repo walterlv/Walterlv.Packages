@@ -18,7 +18,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.10.0" PrivateAssets="all" />
-    <PackageReference Include="Walterlv.NullableAttributes.Source" Version="5.14.2" PrivateAssets="all" />
+    <PackageReference Include="Walterlv.NullableAttributes.Source" Version="5.15.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

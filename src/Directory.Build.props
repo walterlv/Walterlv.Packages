@@ -3,19 +3,23 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);NETSDK1138</NoWarn>
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);NETSDK1138</MSBuildWarningsAsMessages>
     <WarningsAsErrors>$(WarningsAsErrors);CS8600;CS8601;CS8602;CS8603;CS8604;CS8609;CS8610;CS8614;CS8616;CS8618;CS8619;CS8622;CS8625</WarningsAsErrors>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <WarningLevel>5</WarningLevel>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Walterlv.Packages.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <!--<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>-->
-    <PackageOutputPath>$(MSBuildThisFileDirectory)..\bin\$(Configuration)</PackageOutputPath>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)..\bin\$(Configuration)\Packages\</PackageOutputPath>
     <Authors>walterlv</Authors>
     <Company>walterlv</Company>
     <Product>Walterlv.Packages</Product>
-    <Copyright>Copyright (c) 2019-2020 dotnet campus</Copyright>
+    <Copyright>Copyright (c) 2019-2021 dotnet campus</Copyright>
     <RepositoryUrl>https://github.com/walterlv/Walterlv.Packages.git</RepositoryUrl>
     <PackageProjectUrl>https://github.com/walterlv/Walterlv.Packages</PackageProjectUrl>
   </PropertyGroup>

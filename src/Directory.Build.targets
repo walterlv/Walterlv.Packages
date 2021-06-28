@@ -1,7 +1,2 @@
 <Project>
-
-  <PropertyGroup>
-    <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
-  </PropertyGroup>
-  
 </Project>
