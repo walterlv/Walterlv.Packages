@@ -22,6 +22,6 @@ jobs:
         env:
           Configuration: ${{ matrix.configuration }}
       - name: Test
-        run: dotnet test --configuration $env:Configuration
+        run: dotnet test --configuration $env:Configuration --no-build
         env:
           Configuration: ${{ matrix.configuration }}
