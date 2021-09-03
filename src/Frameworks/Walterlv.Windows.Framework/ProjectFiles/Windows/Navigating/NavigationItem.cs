@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using System.Windows;
 using Walterlv.ComponentModel;
+
+#if WINUI
+using UIElement = Microsoft.UI.Xaml.UIElement;
+#else
+using UIElement = System.Windows.UIElement;
+#endif
 
 namespace Walterlv.Windows.Navigating
 {
