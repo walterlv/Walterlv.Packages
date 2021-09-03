@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.0;net45;net5.0-windows10.0.19041.0</TargetFrameworks>
+    <PackageId>Walterlv.Windows.Framework</PackageId>
+    <BuildOutputTargetFolder>Miscellaneous</BuildOutputTargetFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Remove="dotnetCampus.SourceYard" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0-windows10.0.19041.0' ">
+    <ProjectReference Include="..\Walterlv.Windows.Framework.WinUI\Walterlv.Windows.Framework.WinUI.csproj" ReferenceOutputAssembly="False" />
+    <PackageReference Include="Microsoft.ProjectReunion" Version="0.8.3" />
+    <PackageReference Include="Microsoft.ProjectReunion.Foundation" Version="0.8.3" />
+    <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.8.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' OR '$(TargetFramework)' == 'net45' ">
+    <ProjectReference Include="..\Walterlv.Windows.Framework.Wpf\Walterlv.Windows.Framework.Wpf.csproj" ReferenceOutputAssembly="False" />
+  </ItemGroup>
+
+  <Target Name="IncludeAllDependencies" BeforeTargets="_GetPackageFiles">
+    <ItemGroup>
+      <None Include="..\Walterlv.Windows.Framework.Wpf\bin\$(Configuration)\netcoreapp3.0\$(PackageId).dll" Pack="True" PackagePath="lib\netcoreapp3.0" />
+      <None Include="..\Walterlv.Windows.Framework.Wpf\bin\$(Configuration)\netcoreapp3.0\$(PackageId).pdb" Pack="True" PackagePath="lib\netcoreapp3.0" />
+      <None Include="..\Walterlv.Windows.Framework.Wpf\bin\$(Configuration)\netcoreapp3.0\$(PackageId).xml" Pack="True" PackagePath="lib\netcoreapp3.0" />
+      <None Include="..\Walterlv.Windows.Framework.Wpf\bin\$(Configuration)\net45\$(PackageId).dll" Pack="True" PackagePath="lib\net45" />
+      <None Include="..\Walterlv.Windows.Framework.Wpf\bin\$(Configuration)\net45\$(PackageId).pdb" Pack="True" PackagePath="lib\net45" />
+      <None Include="..\Walterlv.Windows.Framework.Wpf\bin\$(Configuration)\net45\$(PackageId).xml" Pack="True" PackagePath="lib\net45" />
+      <None Include="..\Walterlv.Windows.Framework.WinUI\bin\$(Configuration)\net5.0-windows10.0.19041.0\$(PackageId).dll" Pack="True" PackagePath="lib\net5.0-windows10.0.19041" />
+      <None Include="..\Walterlv.Windows.Framework.WinUI\bin\$(Configuration)\net5.0-windows10.0.19041.0\$(PackageId).pdb" Pack="True" PackagePath="lib\net5.0-windows10.0.19041" />
+      <None Include="..\Walterlv.Windows.Framework.WinUI\bin\$(Configuration)\net5.0-windows10.0.19041.0\$(PackageId).xml" Pack="True" PackagePath="lib\net5.0-windows10.0.19041" />
+    </ItemGroup>
+  </Target>
+
+</Project>
