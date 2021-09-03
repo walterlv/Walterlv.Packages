@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.0;netstandard1.0;net40</TargetFrameworks>
+    <RootNamespace>System.Diagnostics.CodeAnalysis</RootNamespace>
+    <Description>If you use C# 8.0 and enable the nullable types, this adds nullable attributes reference for your projects.</Description>
+    <PackSource>false</PackSource>
+    <BuildOutputTargetFolder>Miscellaneous</BuildOutputTargetFolder>
+  </PropertyGroup>
+
+  <Target Name="IncludeAllDependencies" BeforeTargets="_GetPackageFiles">
+    <ItemGroup>
+      <None Include="_._" Pack="True" PackagePath="lib\netcoreapp3.0" />
+      <None Include="$(OutputPath)\netstandard1.0\$(PackageId).dll" Pack="True" PackagePath="lib\netstandard1.0" />
+      <None Include="$(OutputPath)\netstandard1.0\$(PackageId).pdb" Pack="True" PackagePath="lib\netstandard1.0" />
+      <None Include="$(OutputPath)\netstandard1.0\$(PackageId).xml" Pack="True" PackagePath="lib\netstandard1.0" />
+      <None Include="$(OutputPath)\net40\$(PackageId).dll" Pack="True" PackagePath="lib\net40" />
+      <None Include="$(OutputPath)\net40\$(PackageId).pdb" Pack="True" PackagePath="lib\net40" />
+      <None Include="$(OutputPath)\net40\$(PackageId).xml" Pack="True" PackagePath="lib\net40" />
+    </ItemGroup>
+  </Target>
+
+</Project>
