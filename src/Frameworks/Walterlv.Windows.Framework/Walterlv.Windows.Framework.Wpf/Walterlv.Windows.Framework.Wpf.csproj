@@ -2,7 +2,11 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
+    <AssemblyName>Walterlv.Windows.Framework</AssemblyName>
+    <PackageId>Walterlv.Windows.Framework</PackageId>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <UseWPF>true</UseWPF>
+    <DefineConstants>$(DefineConstants);WPF</DefineConstants>
     <RootNamespace>Walterlv</RootNamespace>
     <Description>This is an MVVM framework without any document.</Description>
   </PropertyGroup>
