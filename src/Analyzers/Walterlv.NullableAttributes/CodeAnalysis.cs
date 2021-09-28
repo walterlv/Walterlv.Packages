@@ -1,17 +1,5 @@
 ﻿#if NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0_OR_GREATER
 // 新框架都包含基本的 Nullable Attributes。
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
-
-[assembly:TypeForwardedTo(typeof(AllowNullAttribute))]
-[assembly:TypeForwardedTo(typeof(DisallowNullAttribute))]
-[assembly:TypeForwardedTo(typeof(MaybeNullAttribute))]
-[assembly:TypeForwardedTo(typeof(NotNullAttribute))]
-[assembly:TypeForwardedTo(typeof(MaybeNullWhenAttribute))]
-[assembly:TypeForwardedTo(typeof(NotNullWhenAttribute))]
-[assembly:TypeForwardedTo(typeof(NotNullIfNotNullAttribute))]
-[assembly:TypeForwardedTo(typeof(DoesNotReturnAttribute))]
-[assembly:TypeForwardedTo(typeof(DoesNotReturnIfAttribute))]
 #else
 // 旧框架需要包含 Nullable Attributes。
 namespace System.Diagnostics.CodeAnalysis
@@ -128,8 +116,6 @@ namespace System.Diagnostics.CodeAnalysis
 
 #if NET5_0_OR_GREATER
 // .NET 5.0 开始已包含更多 Nullable Attributes。
-[assembly: TypeForwardedTo(typeof(MemberNotNullAttribute))]
-[assembly: TypeForwardedTo(typeof(MemberNotNullWhenAttribute))]
 #else
 // 旧框架需要包含 Nullable Attributes。
 namespace System.Diagnostics.CodeAnalysis
