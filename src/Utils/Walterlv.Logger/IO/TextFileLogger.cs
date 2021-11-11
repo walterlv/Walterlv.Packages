@@ -318,9 +318,16 @@ namespace Walterlv.Logging.IO
                 }
                 catch (IOException ex)
                 {
+                    const int HR_ERROR_PATH_NOT_FOUND = unchecked((int)0x80070003);
                     const int HR_ERROR_HANDLE_DISK_FULL = unchecked((int)0x80070027);
                     const int HR_ERROR_DISK_FULL = unchecked((int)0x80070070);
-                    if (ex.HResult == HR_ERROR_HANDLE_DISK_FULL || ex.HResult == HR_ERROR_DISK_FULL)
+                    if (ex.HResult == HR_ERROR_PATH_NOT_FOUND)
+                    {
+                        // 路径不存在。
+                        Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+                        await Task.Delay(10).ConfigureAwait(false);
+                    }
+                    else if (ex.HResult == HR_ERROR_HANDLE_DISK_FULL || ex.HResult == HR_ERROR_DISK_FULL)
                     {
                         // 磁盘已满，不再写入。
                         return;
