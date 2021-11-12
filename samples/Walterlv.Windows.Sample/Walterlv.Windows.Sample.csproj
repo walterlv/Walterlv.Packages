@@ -7,8 +7,12 @@
     <ApplicationManifest>Properties\App.manifest</ApplicationManifest>
   </PropertyGroup>
 
+	<ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" />
+	</ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Diagnostics\Walterlv.NullableAttributes\Walterlv.NullableAttributes.csproj" />
+    <ProjectReference Include="..\..\src\Analyzers\Walterlv.NullableAttributes\Walterlv.NullableAttributes.csproj" />
     <ProjectReference Include="..\..\src\Frameworks\Walterlv.Windows.Framework\Walterlv.Windows.Framework.Wpf\Walterlv.Windows.Framework.Wpf.csproj" />
     <ProjectReference Include="..\..\src\Themes\Walterlv.Themes.FluentDesign\Walterlv.Themes.FluentDesign.csproj" />
     <ProjectReference Include="..\..\src\Utils\Walterlv.Collections\Walterlv.Collections.csproj" />
