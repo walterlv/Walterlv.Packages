@@ -1,2 +1,12 @@
 <Project>
+
+  <Target Name="WalterlvPackagesIncludeNetFrameworkReferences" BeforeTargets="GetReferenceAssemblyPaths" DependsOnTargets="Restore"
+          Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' And '$(TargetFrameworkRootPath)' == '' ">
+    <PropertyGroup>
+      <TargetFrameworkRootPath Condition=" $(TargetFrameworkMoniker) == '.NETFramework,Version=v4.5' ">$(UserProfile)\.nuget\packages\microsoft.netframework.referenceassemblies.net45\1.0.2\build</TargetFrameworkRootPath>
+      <TargetFrameworkRootPath Condition=" $(TargetFrameworkMoniker) == '.NETFramework,Version=v4.0' ">$(UserProfile)\.nuget\packages\microsoft.netframework.referenceassemblies.net40\1.0.2\build</TargetFrameworkRootPath>
+    </PropertyGroup>
+    <!--<Warning Code="WPA001" Text="$(TargetFrameworkMoniker) R = $(TargetFrameworkRootPath)" />-->
+  </Target>
+
 </Project>
