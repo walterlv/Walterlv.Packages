@@ -6,7 +6,7 @@
     <Description>Provide information of .NET Framework from the system registry.</Description>
   </PropertyGroup>
 
-  <ItemGroup Condition="$(TargetFramework) != 'net45'">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)'!='.NETFramework'">
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.2" />
   </ItemGroup>
   

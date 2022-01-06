@@ -5,7 +5,7 @@
     <Description>This library provides Win32 extensions. It deos not contains any Win32 type definitions or any Win32 APIs.</Description>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net45' ">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)'!='.NETFramework'">
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
   </ItemGroup>
 
