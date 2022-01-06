@@ -8,13 +8,23 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
+
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Setup
         uses: actions/setup-dotnet@v1
+        with:
+            dotnet-version: |
+              3.1.x
+              5.0.x
+              6.0.x
+
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
+
       - name: Build the solution
         run: msbuild /p:Configuration=Release -restore
+
       - name: Push
         run: dotnet nuget push .\bin\Release\Packages\*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NuGetAPIKey }} --skip-duplicate --no-symbols 1
