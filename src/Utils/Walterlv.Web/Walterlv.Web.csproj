@@ -5,7 +5,7 @@
     <Description>This library provide some extensions for System.Web. It contains query string extensions only in this version.</Description>
   </PropertyGroup>
 
-  <ItemGroup Condition=" $(TargetFramework) == net45 ">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)'=='.NETFramework'">
     <Reference Include="System.Web" />
   </ItemGroup>
 

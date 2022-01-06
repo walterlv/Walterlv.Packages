@@ -8,7 +8,6 @@ using Size = System.Windows.Size;
 using Lsj.Util.Win32;
 using Lsj.Util.Win32.Enums;
 using Walterlv.Windows.Media;
-using Lsj.Util.Win32.BaseTypes;
 
 namespace Walterlv.Windows.Interop
 {
@@ -106,7 +105,7 @@ namespace Walterlv.Windows.Interop
             // 有些程序窗口大小不变时，无论如何刷新渲染都没用。因此必须强制通知窗口大小已经改变。
             // 实际情况是虽然窗口大小不变，但客户区大小变化了，所以本就应该刷新布局。
             await Task.Delay(1).ConfigureAwait(false);
-            User32.SendMessage(Handle, WindowsMessages.WM_SIZE, UIntPtr.Zero, IntPtr.Zero);
+            User32.SendMessage(Handle, WindowMessages.WM_SIZE, UIntPtr.Zero, IntPtr.Zero);
 
             if (captured is true)
             {
@@ -238,7 +237,7 @@ namespace Walterlv.Windows.Interop
             User32.ShowWindow(Handle, ShowWindowCommands.SW_SHOW);
             // 发送窗口已取消激活消息。
             const int WA_ACTIVE = 0x0001;
-            User32.SendMessage(Handle, WindowsMessages.WM_ACTIVATE, WA_ACTIVE, IntPtr.Zero);
+            User32.SendMessage(Handle, WindowMessages.WM_ACTIVATE, WA_ACTIVE, IntPtr.Zero);
         }
 
         /// <summary>
@@ -248,7 +247,7 @@ namespace Walterlv.Windows.Interop
         {
             // 发送窗口已取消激活消息。
             const int WA_INACTIVE = 0x0000;
-            User32.SendMessage(Handle, WindowsMessages.WM_ACTIVATE, WA_INACTIVE, IntPtr.Zero);
+            User32.SendMessage(Handle, WindowMessages.WM_ACTIVATE, WA_INACTIVE, IntPtr.Zero);
             // 隐藏子窗口。
             User32.ShowWindow(Handle, ShowWindowCommands.SW_HIDE);
             // 显示到奇怪的地方。

@@ -8,8 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lsj.Util.Win32" Version="5.1.0" />
-    <PackageReference Condition=" '$(TargetFramework)' == 'net45' " Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="Lsj.Util.Win32" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)'=='.NETFramework'">
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
 </Project>
