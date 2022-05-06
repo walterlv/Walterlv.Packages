@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Text;
+
 using Walterlv.IO.PackageManagement.Core;
 
 namespace Walterlv.IO.PackageManagement
@@ -172,7 +173,7 @@ namespace Walterlv.IO.PackageManagement
                     foreach (DirectoryInfo directory in sourceDirectory.EnumerateDirectories())
                     {
                         var targetDirectoryPath = Path.Combine(targetDirectory.FullName, directory.Name);
-                        var moveResult = Move(directory, new DirectoryInfo(targetDirectoryPath));
+                        var moveResult = Move(directory, new DirectoryInfo(targetDirectoryPath), overwrite);
                         logger.Append(moveResult);
                     }
                 }
@@ -186,10 +187,83 @@ namespace Walterlv.IO.PackageManagement
             {
                 logger.Log("源目录与目标目录不在相同驱动器，先进行复制，再删除源目录。");
 
-                var copyResult = Copy(sourceDirectory, targetDirectory);
+                var copyResult = Copy(sourceDirectory, targetDirectory, overwrite);
                 logger.Append(copyResult);
 
                 var deleteResult = Delete(sourceDirectory);
+                logger.Append(deleteResult);
+            }
+            return logger;
+        }
+
+        /// <summary>
+        /// 以自定义的冲突解决策略将源路径文件夹移动成为目标路径文件夹。
+        /// 由 <paramref name="conflictionResolver"/> 参数指定在目标文件存在时应如何解决冲突。
+        /// </summary>
+        /// <param name="sourceDirectory">源文件夹。</param>
+        /// <param name="targetDirectory">目标文件夹。</param>
+        /// <param name="conflictionResolver">指定当目标文件存在时应如何解决冲突。</param>
+        /// <returns>包含执行成功和失败的信息，以及中间执行中方法自动决定的一些细节。</returns>
+        public static IOResult Move(DirectoryInfo sourceDirectory, DirectoryInfo targetDirectory, Action<FileMergeResolvingInfo> conflictionResolver)
+        {
+            if (sourceDirectory is null)
+            {
+                throw new ArgumentNullException(nameof(sourceDirectory));
+            }
+
+            if (targetDirectory is null)
+            {
+                throw new ArgumentNullException(nameof(targetDirectory));
+            }
+
+            var logger = new IOResult();
+            logger.Log($"移动目录，从“{sourceDirectory.FullName}”到“{targetDirectory.FullName}”。");
+
+            if (!Directory.Exists(sourceDirectory.FullName))
+            {
+                logger.Log($"要移动的源目录“{sourceDirectory.FullName}”不存在。");
+                return logger;
+            }
+
+            if (Path.GetPathRoot(sourceDirectory.FullName) == Path.GetPathRoot(targetDirectory.FullName))
+            {
+                logger.Log("源目录与目标目录在相同驱动器，直接移动。");
+
+                var deleteOverwriteResult = DeleteIfOverwrite(targetDirectory, DirectoryOverwriteStrategy.MergeOverwrite);
+                logger.Append(deleteOverwriteResult);
+
+                try
+                {
+                    logger.Log("无论是否存在，都创建文件夹。");
+                    Directory.CreateDirectory(targetDirectory.FullName);
+
+                    foreach (var sourceFile in sourceDirectory.EnumerateFiles())
+                    {
+                        var targetFile = new FileInfo(Path.Combine(targetDirectory.FullName, sourceFile.Name));
+                        MoveFileWithConflictionResolver(targetDirectory, sourceFile, targetFile, conflictionResolver);
+                    }
+
+                    foreach (DirectoryInfo directory in sourceDirectory.EnumerateDirectories())
+                    {
+                        var targetDirectoryPath = Path.Combine(targetDirectory.FullName, directory.Name);
+                        var moveResult = Move(directory, new DirectoryInfo(targetDirectoryPath), conflictionResolver);
+                        logger.Append(moveResult);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Fail(ex);
+                    return logger;
+                }
+            }
+            else
+            {
+                logger.Log("源目录与目标目录不在相同驱动器，先进行复制，再删除源目录。");
+
+                var copyResult = PackageDirectory.Copy(sourceDirectory, targetDirectory, DirectoryOverwriteStrategy.MergeOverwrite);
+                logger.Append(copyResult);
+
+                var deleteResult = PackageDirectory.Delete(sourceDirectory);
                 logger.Append(deleteResult);
             }
             return logger;
@@ -253,7 +327,7 @@ namespace Walterlv.IO.PackageManagement
                 foreach (DirectoryInfo directory in sourceDirectory.EnumerateDirectories())
                 {
                     var targetDirectoryPath = Path.Combine(targetDirectory.FullName, directory.Name);
-                    var copyResult = Copy(directory, new DirectoryInfo(targetDirectoryPath));
+                    var copyResult = Copy(directory, new DirectoryInfo(targetDirectoryPath), overwrite);
                     logger.Append(copyResult);
                 }
             }
@@ -341,6 +415,15 @@ namespace Walterlv.IO.PackageManagement
             var logger = new IOResult();
             logger.Log($"创建目录联接，将“{linkDirectory.FullName}”联接到“{targetDirectory.FullName}”。");
 
+            var parent = linkDirectory.Parent;
+            if (parent is null)
+            {
+                throw new IOException("联接的目录没有父级目录，因此无法创建联接。");
+            }
+            if (!Directory.Exists(parent.FullName))
+            {
+                Directory.CreateDirectory(parent.FullName);
+            }
             try
             {
                 JunctionPoint.Create(linkDirectory.FullName, targetDirectory.FullName, overwrite);
@@ -382,6 +465,132 @@ namespace Walterlv.IO.PackageManagement
                 }
             }
             return logger;
+        }
+
+        private static void MoveFileWithConflictionResolver(DirectoryInfo targetDirectory, FileInfo sourceFile, FileInfo targetFile, Action<FileMergeResolvingInfo> conflictionResolver)
+        {
+            var resolver = new FileMergeResolvingInfo(targetDirectory, targetFile);
+            for (var i = 0; i < ushort.MaxValue; i++)
+            {
+                if (i is not 0)
+                {
+                    resolver.IncreaseRetryCount();
+                    conflictionResolver(resolver);
+                }
+                var keepSource = resolver.Strategy.HasFlag(FileMergeStrategy.KeepSource);
+                var keepTarget = resolver.Strategy.HasFlag(FileMergeStrategy.KeepTarget);
+                var ignoreIfInUse = resolver.Strategy.HasFlag(FileMergeStrategy.IgnoreIfInUse);
+                if (keepSource && keepTarget)
+                {
+                    // 保留源，且保留目标。
+                    // 应确保一定有不同名称。
+                    try
+                    {
+                        if (!AreSameFilePaths(targetFile.FullName, resolver.ResolvedTargetFilePath))
+                        {
+                            File.Move(targetFile.FullName, resolver.ResolvedTargetFilePath);
+                        }
+                        if (!AreSameFilePaths(sourceFile.FullName, resolver.ResolvedSourceFilePath))
+                        {
+                            File.Move(sourceFile.FullName, resolver.ResolvedSourceFilePath);
+                        }
+                        return;
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        return;
+                    }
+                    catch (IOException)
+                    {
+                        // 重新循环以解冲突。
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        // 文件被占用。
+                        // 重新循环以解冲突。
+                    }
+                }
+                else if (keepSource && !keepTarget)
+                {
+                    // 保留源，但不保留目标。
+                    // 当未被占用时覆盖，当被占用时用不同名称。
+                    try
+                    {
+                        if (!AreSameFilePaths(sourceFile.FullName, resolver.ResolvedSourceFilePath))
+                        {
+#if NETCOREAPP3_0_OR_GREATER
+                            File.Move(sourceFile.FullName, resolver.ResolvedSourceFilePath, true);
+#else
+                            if (File.Exists(resolver.ResolvedSourceFilePath))
+                            {
+                                File.Delete(resolver.ResolvedSourceFilePath);
+                            }
+                            File.Move(sourceFile.FullName, resolver.ResolvedSourceFilePath);
+#endif
+                        }
+                        return;
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        return;
+                    }
+                    catch (IOException)
+                    {
+                        if (ignoreIfInUse)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            // 重新循环以解冲突。
+                        }
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        // 文件被占用。
+                        if (ignoreIfInUse)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            // 重新循环以解冲突。
+                        }
+                    }
+                }
+                else if (!keepSource && keepTarget)
+                {
+                    // 不保留源，但保留目标。
+                    try
+                    {
+                        File.Delete(sourceFile.FullName);
+                    }
+                    catch (IOException)
+                    {
+                    }
+                    return;
+                }
+                else if (!keepSource && !keepTarget)
+                {
+                    // 不保留源，也不保留目标。
+                    // 那你为什么要复制？
+                    try
+                    {
+                        File.Delete(sourceFile.FullName);
+                    }
+                    catch (IOException)
+                    {
+                    }
+                    return;
+                }
+            }
+        }
+
+        private static bool AreSameFilePaths(string path1, string path2)
+        {
+            var file1 = new FileInfo(path1).FullName;
+            var file2 = new FileInfo(path2).FullName;
+            return string.Equals(file1, file2, StringComparison.OrdinalIgnoreCase);
         }
 
         [ContractArgumentValidator]
