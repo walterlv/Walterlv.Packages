@@ -392,7 +392,7 @@ namespace Walterlv.IO.PackageManagement
                         Delete(directoryInfo, depth + 1, logger);
                     }
 
-                    Directory.Delete(directory.FullName);
+                    Directory.Delete(directory.FullName, true);
                 }
                 catch (Exception ex)
                 {
