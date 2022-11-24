@@ -60,25 +60,22 @@ namespace Walterlv.Win32
 
         private delegate bool WndEnumProc(IntPtr hWnd, int lParam);
 
-        [DllImport("user32")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
         private static extern bool EnumWindows(WndEnumProc lpEnumFunc, int lParam);
 
-        [DllImport("user32")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
         private static extern IntPtr GetParent(IntPtr hWnd);
 
-        [DllImport("user32")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
         private static extern bool IsWindowVisible(IntPtr hWnd);
 
-        [DllImport("user32")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, EntryPoint = "GetWindowTextW", ExactSpelling = true, SetLastError = true)]
         private static extern int GetWindowText(IntPtr hWnd, StringBuilder lptrString, int nMaxCount);
 
-        [DllImport("user32")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, EntryPoint = "GetClassNameW", ExactSpelling = true, SetLastError = true)]
         private static extern int GetClassName(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
-        [DllImport("user32")]
-        private static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
-
-        [DllImport("user32")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
         private static extern bool GetWindowRect(IntPtr hWnd, ref LPRECT rect);
 
         [StructLayout(LayoutKind.Sequential)]

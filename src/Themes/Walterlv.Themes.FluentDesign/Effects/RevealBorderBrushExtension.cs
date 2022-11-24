@@ -202,7 +202,7 @@ namespace Walterlv.Windows.Effects
             return false;
         }
 
-        [DllImport("user32", ExactSpelling = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
         private static extern bool IsWindow(IntPtr hwnd);
     }
 }
