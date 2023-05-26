@@ -59,7 +59,7 @@
 [37]: https://www.nuget.org/packages/Walterlv.NullableAttributes/
 [38]: https://img.shields.io/nuget/v/Walterlv.NullableAttributes.Source
 [39]: https://www.nuget.org/packages/Walterlv.NullableAttributes.Source/
-[40]: /docs/Packages/Walterlv.NullableAttributes/README.md
+[40]: https://blog.walterlv.com/post/how-to-enable-nullable-reference-types
 [41]: https://img.shields.io/nuget/v/Walterlv.Themes.FluentDesign
 [42]: https://www.nuget.org/packages/Walterlv.Themes.FluentDesign/
 [43]: https://img.shields.io/nuget/v/Walterlv.Themes.FluentDesign.Source
