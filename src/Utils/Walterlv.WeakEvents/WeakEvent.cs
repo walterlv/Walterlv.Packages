@@ -62,10 +62,9 @@ public class WeakEvent<TSender, TArgs>
         var target = originalHandler.Target;
         var method = originalHandler.Method;
 
-        if (target is null)
-        {
-            throw new NotSupportedException($"弱事件订阅时，事件的订阅者必须是一个对象。此委托中的目标实例是 null：{originalHandler}");
-        }
+        // 当 target 为 null 时，说明是静态方法。
+        // 此时我们将 target 设置为方法所在的类型，这样可以保证静态方法的生命周期与类型的生命周期相同。
+        target ??= method.DeclaringType;
 
         lock (_locker)
         {
@@ -103,12 +102,9 @@ public class WeakEvent<TSender, TArgs>
         // 获取委托对应的目标实例。
         var target = originalHandler.Target;
 
-        if (target is null)
-        {
-            // 因为 Add 的时候已经抛出了异常，所以 Remove 能进来的委托，一定不可能被 Add 过。
-            // 所以这里的 Remove 就像普通 -= 那些未曾订阅过的事件行为一样（什么都不做）即可。
-            return;
-        }
+        // 当 target 为 null 时，说明是静态方法。
+        // 此时我们将 target 设置为方法所在的类型，这样可以保证静态方法的生命周期与类型的生命周期相同。
+        target ??= originalHandler.Method.DeclaringType;
 
         lock (_locker)
         {
