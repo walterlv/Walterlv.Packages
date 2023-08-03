@@ -6,6 +6,7 @@
 | ------------------------------- | -------------------------------------------- | --------------------------------------------------- | -------------- |
 | Walterlv.CodeAnalysis.Analyzers | [![Walterlv.CodeAnalysis.Analyzers][11]][12] | [![Walterlv.CodeAnalysis.Analyzers.Source][13]][14] |                |
 | Walterlv.Collections            | [![Walterlv.Collections][16]][17]            | [![Walterlv.Collections.Source][18]][19]            |                |
+| Walterlv.Console                | [![Walterlv.Console][70]][71]                | [![Walterlv.Console.Source][72]][73]                | [前往查看][74] |
 | Walterlv.Environment            | [![Walterlv.Environment][20]][21]            | [![Walterlv.Environment.Source][22]][23]            |                |
 | Walterlv.IO                     | [![Walterlv.IO][24]][25]                     | [![Walterlv.IO.Source][26]][27]                     |                |
 | Walterlv.IO.PackageManagement   | [![Walterlv.IO.PackageManagement][28]][29]   | [![Walterlv.IO.PackageManagement.Source][30]][31]   |                |
@@ -39,6 +40,11 @@
 [17]: https://www.nuget.org/packages/Walterlv.Collections/
 [18]: https://img.shields.io/nuget/v/Walterlv.Collections.Source
 [19]: https://www.nuget.org/packages/Walterlv.Collections.Source/
+[70]: https://img.shields.io/nuget/v/Walterlv.Console
+[71]: https://www.nuget.org/packages/Walterlv.Console/
+[72]: https://img.shields.io/nuget/v/Walterlv.Console.Source
+[73]: https://www.nuget.org/packages/Walterlv.Console.Source/
+[74]: https://blog.walterlv.com/post/format-data-as-a-table-in-console
 [20]: https://img.shields.io/nuget/v/Walterlv.Environment
 [21]: https://www.nuget.org/packages/Walterlv.Environment/
 [22]: https://img.shields.io/nuget/v/Walterlv.Environment.Source
