@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <Description>This library provide some extensions to help you build better console apps.</Description>
+    <RootNamespace>Walterlv.ConsoleExtensions</RootNamespace>
+  </PropertyGroup>
+
+</Project>

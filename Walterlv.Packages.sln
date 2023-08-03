@@ -61,6 +61,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.NullableAttributes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Walterlv.NullableAttributes.Source", "src\Analyzers\Walterlv.NullableAttributes.Source\Walterlv.NullableAttributes.Source.csproj", "{8E404964-516F-4970-8859-4764B7A37EDC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walterlv.Console", "src\Utils\Walterlv.Console\Walterlv.Console.csproj", "{6FE3BA07-C340-4D0A-9365-9CB23DD91B4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -237,6 +239,14 @@ Global
 		{8E404964-516F-4970-8859-4764B7A37EDC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8E404964-516F-4970-8859-4764B7A37EDC}.Release|x86.ActiveCfg = Release|Any CPU
 		{8E404964-516F-4970-8859-4764B7A37EDC}.Release|x86.Build.0 = Release|Any CPU
+		{6FE3BA07-C340-4D0A-9365-9CB23DD91B4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FE3BA07-C340-4D0A-9365-9CB23DD91B4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FE3BA07-C340-4D0A-9365-9CB23DD91B4E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6FE3BA07-C340-4D0A-9365-9CB23DD91B4E}.Debug|x86.Build.0 = Debug|Any CPU
+		{6FE3BA07-C340-4D0A-9365-9CB23DD91B4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FE3BA07-C340-4D0A-9365-9CB23DD91B4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FE3BA07-C340-4D0A-9365-9CB23DD91B4E}.Release|x86.ActiveCfg = Release|Any CPU
+		{6FE3BA07-C340-4D0A-9365-9CB23DD91B4E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
