@@ -74,6 +74,11 @@ namespace Walterlv.Logging.IO
         }
 
         /// <summary>
+        /// 获取或设置一个值，指示在记录错误日志时，是否同时在信息日志上对此错误进行高亮显示。
+        /// </summary>
+        public bool HighlightErrorsOnInfo { get; set; } = true;
+
+        /// <summary>
         /// 请求在写入首条日志前针对日志文件执行一些代码。代码可能在任一线程中执行，但确保不会并发。
         /// </summary>
         /// <param name="fileInterceptor">
@@ -133,7 +138,10 @@ namespace Walterlv.Logging.IO
             if (!areSameFile && context.CurrentLevel <= LogLevel.Error)
             {
                 // 写入日志的主要部分。
-                CriticalWrite(infoMutex, _infoLogFile, BuildLogText(in context, containsExtraInfo: false, _lineEnd));
+                if (HighlightErrorsOnInfo)
+                {
+                    CriticalWrite(infoMutex, _infoLogFile, BuildLogText(in context, containsExtraInfo: false, _lineEnd));
+                }
 
                 // 写入日志的扩展部分。
                 CriticalWrite(errorMutex, _errorLogFile, BuildLogText(in context, context.ExtraInfo != null, _lineEnd));
