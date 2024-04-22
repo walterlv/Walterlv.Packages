@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
-using System.Text;
-
 using Walterlv.IO.PackageManagement.Core;
 
 namespace Walterlv.IO.PackageManagement
@@ -42,7 +39,8 @@ namespace Walterlv.IO.PackageManagement
         /// <param name="targetDirectory">目标文件夹。</param>
         /// <param name="overwrite">指定当目标路径存在现成现成文件夹时，应该如何覆盖目标文件夹。</param>
         /// <returns>包含执行成功和失败的信息，以及中间执行中方法自动决定的一些细节。</returns>
-        public static IOResult Move(string sourceDirectory, string targetDirectory, DirectoryOverwriteStrategy overwrite = DirectoryOverwriteStrategy.Overwrite) => Move(
+        public static IOResult Move(string sourceDirectory, string targetDirectory,
+            DirectoryOverwriteStrategy overwrite = DirectoryOverwriteStrategy.Overwrite) => Move(
             VerifyDirectoryArgument(sourceDirectory, nameof(sourceDirectory)),
             VerifyDirectoryArgument(targetDirectory, nameof(targetDirectory)),
             overwrite);
@@ -68,7 +66,8 @@ namespace Walterlv.IO.PackageManagement
         /// <param name="targetDirectory">目标文件夹。</param>
         /// <param name="overwrite">指定当目标路径存在现成现成文件夹时，应该如何覆盖目标文件夹。</param>
         /// <returns>包含执行成功和失败的信息，以及中间执行中方法自动决定的一些细节。</returns>
-        public static IOResult Copy(string sourceDirectory, string targetDirectory, DirectoryOverwriteStrategy overwrite = DirectoryOverwriteStrategy.Overwrite) => Copy(
+        public static IOResult Copy(string sourceDirectory, string targetDirectory,
+            DirectoryOverwriteStrategy overwrite = DirectoryOverwriteStrategy.Overwrite) => Copy(
             VerifyDirectoryArgument(sourceDirectory, nameof(sourceDirectory)),
             VerifyDirectoryArgument(targetDirectory, nameof(targetDirectory)),
             overwrite);
@@ -131,7 +130,8 @@ namespace Walterlv.IO.PackageManagement
         /// <param name="targetDirectory">目标文件夹。</param>
         /// <param name="overwrite">指定当目标路径存在现成现成文件夹时，应该如何覆盖目标文件夹。</param>
         /// <returns>包含执行成功和失败的信息，以及中间执行中方法自动决定的一些细节。</returns>
-        public static IOResult Move(DirectoryInfo sourceDirectory, DirectoryInfo targetDirectory, DirectoryOverwriteStrategy overwrite = DirectoryOverwriteStrategy.Overwrite)
+        public static IOResult Move(DirectoryInfo sourceDirectory, DirectoryInfo targetDirectory,
+            DirectoryOverwriteStrategy overwrite = DirectoryOverwriteStrategy.Overwrite)
         {
             if (sourceDirectory is null)
             {
@@ -289,7 +289,8 @@ namespace Walterlv.IO.PackageManagement
         /// <param name="targetDirectory">目标文件夹。</param>
         /// <param name="overwrite">指定当目标路径存在现成现成文件夹时，应该如何覆盖目标文件夹。</param>
         /// <returns>包含执行成功和失败的信息，以及中间执行中方法自动决定的一些细节。</returns>
-        public static IOResult Copy(DirectoryInfo sourceDirectory, DirectoryInfo targetDirectory, DirectoryOverwriteStrategy overwrite = DirectoryOverwriteStrategy.Overwrite)
+        public static IOResult Copy(DirectoryInfo sourceDirectory, DirectoryInfo targetDirectory,
+            DirectoryOverwriteStrategy overwrite = DirectoryOverwriteStrategy.Overwrite)
         {
             if (sourceDirectory is null)
             {
@@ -374,6 +375,12 @@ namespace Walterlv.IO.PackageManagement
                 {
                     JunctionPoint.Delete(directory.FullName);
                 }
+#if NET6_0_OR_GREATER
+                else if(directory.LinkTarget != null)
+                {
+                    directory.Delete();
+                }
+#endif
                 else if (!Directory.Exists(directory.FullName))
                 {
                     return;
@@ -444,21 +451,21 @@ namespace Walterlv.IO.PackageManagement
                 switch (overwrite)
                 {
                     case DirectoryOverwriteStrategy.DoNotOverwrite:
-                        {
-                            logger.Log("目标目录已经存在，但是要求不被覆盖，抛出异常。");
-                            throw new IOException($"目标目录“{targetDirectory.FullName}”已经存在，如要覆盖，请设置 {nameof(overwrite)} 为 true。");
-                        }
+                    {
+                        logger.Log("目标目录已经存在，但是要求不被覆盖，抛出异常。");
+                        throw new IOException($"目标目录“{targetDirectory.FullName}”已经存在，如要覆盖，请设置 {nameof(overwrite)} 为 true。");
+                    }
                     case DirectoryOverwriteStrategy.Overwrite:
-                        {
-                            logger.Log("目标目录已经存在，删除。");
-                            var deleteResult = Delete(targetDirectory.FullName);
-                            logger.Append(deleteResult);
-                        }
+                    {
+                        logger.Log("目标目录已经存在，删除。");
+                        var deleteResult = Delete(targetDirectory.FullName);
+                        logger.Append(deleteResult);
+                    }
                         break;
                     case DirectoryOverwriteStrategy.MergeOverwrite:
-                        {
-                            // 如果是合并式覆盖，那么不需要删除，也不需要抛异常，直接覆盖即可。
-                        }
+                    {
+                        // 如果是合并式覆盖，那么不需要删除，也不需要抛异常，直接覆盖即可。
+                    }
                         break;
                     default:
                         break;
@@ -467,7 +474,8 @@ namespace Walterlv.IO.PackageManagement
             return logger;
         }
 
-        private static void MoveFileWithConflictionResolver(DirectoryInfo targetDirectory, FileInfo sourceFile, FileInfo targetFile, Action<FileMergeResolvingInfo> conflictionResolver)
+        private static void MoveFileWithConflictionResolver(DirectoryInfo targetDirectory, FileInfo sourceFile, FileInfo targetFile,
+            Action<FileMergeResolvingInfo> conflictionResolver)
         {
             var resolver = new FileMergeResolvingInfo(targetDirectory, targetFile);
             for (var i = 0; i < ushort.MaxValue; i++)

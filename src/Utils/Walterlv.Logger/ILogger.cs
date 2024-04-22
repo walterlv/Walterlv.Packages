@@ -26,14 +26,14 @@ namespace Walterlv.Logging
         void Message(string text, [CallerMemberName] string? callerMemberName = null);
 
         /// <summary>
-        /// 如果方法进入了非预期的分支，请调用此方法以便在日志文件中高亮显示。
+        /// 如果方法进入了非预期的分支，请调用此方法以便在记录可高亮显示的日志。
         /// </summary>
         /// <param name="message">描述当前进入的代码分支。</param>
         /// <param name="callerMemberName">编译器自动传入。</param>
         void Warning(string message, [CallerMemberName] string? callerMemberName = null);
 
         /// <summary>
-        /// 在单独的日志文件中记录异常，并同时在普通的日志文件中插入一段高亮显示的日志。
+        /// 单独记录异常。
         /// 请注意，并不是所有的异常都需要调用此方法记录，此方法仅仅记录非预期的异常。
         /// </summary>
         /// <param name="message">对当前异常的文字描述。</param>
@@ -42,7 +42,7 @@ namespace Walterlv.Logging
         void Error(string message, Exception? exception = null, [CallerMemberName] string? callerMemberName = null);
 
         /// <summary>
-        /// 在单独的日志文件中记录异常，并同时在普通的日志文件中插入一段高亮显示的日志。
+        /// 单独记录异常。
         /// 请注意，并不是所有的异常都需要调用此方法记录，此方法仅仅记录非预期的异常。
         /// </summary>
         /// <param name="exception">异常实例。</param>
@@ -51,7 +51,7 @@ namespace Walterlv.Logging
         void Error(Exception exception, string? message = null, [CallerMemberName] string? callerMemberName = null);
 
         /// <summary>
-        /// 在单独的日志文件中记录一条导致致命性错误的异常，并同时在普通的日志文件中插入一段高亮显示的致命错误标记。
+        /// 单独记录导致致命性错误的异常。
         /// 请注意，仅在全局区域记录此异常，全局区域如果还能收到异常说明方法内部有未处理的异常。
         /// </summary>
         /// <param name="exception">异常实例。</param>
