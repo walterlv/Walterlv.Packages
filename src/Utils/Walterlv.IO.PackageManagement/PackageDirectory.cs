@@ -367,7 +367,13 @@ namespace Walterlv.IO.PackageManagement
 
             static void Delete(DirectoryInfo directory, int depth, IOResult logger)
             {
-                if (OperatingSystem.IsWindows() && JunctionPoint.Exists(directory.FullName))
+                if
+                (
+#if NET6_0_OR_GREATER
+                    OperatingSystem.IsWindows() &&
+#endif
+                    JunctionPoint.Exists(directory.FullName)
+                )
                 {
                     JunctionPoint.Delete(directory.FullName);
                     return;
