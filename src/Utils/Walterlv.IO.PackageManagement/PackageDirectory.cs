@@ -357,11 +357,7 @@ namespace Walterlv.IO.PackageManagement
             var logger = new IOResult();
             logger.Log($"删除目录“{directory.FullName}”。");
 
-            if (JunctionPoint.Exists(directory.FullName))
-            {
-                JunctionPoint.Delete(directory.FullName);
-            }
-            else if (!Directory.Exists(directory.FullName))
+            if (!Directory.Exists(directory.FullName))
             {
                 logger.Log($"要删除的目录“{directory.FullName}”不存在。");
                 return logger;
@@ -371,14 +367,16 @@ namespace Walterlv.IO.PackageManagement
 
             static void Delete(DirectoryInfo directory, int depth, IOResult logger)
             {
-                if (JunctionPoint.Exists(directory.FullName))
+                if (OperatingSystem.IsWindows() && JunctionPoint.Exists(directory.FullName))
                 {
                     JunctionPoint.Delete(directory.FullName);
+                    return;
                 }
 #if NET6_0_OR_GREATER
                 else if(directory.LinkTarget != null)
                 {
                     directory.Delete();
+                    return;
                 }
 #endif
                 else if (!Directory.Exists(directory.FullName))
@@ -395,7 +393,7 @@ namespace Walterlv.IO.PackageManagement
 
                     foreach (var directoryInfo in directory.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
                     {
-                        var back = string.Join("\\", Enumerable.Repeat("..", depth));
+                        //var back = string.Join("\\", Enumerable.Repeat("..", depth));
                         Delete(directoryInfo, depth + 1, logger);
                     }
 
