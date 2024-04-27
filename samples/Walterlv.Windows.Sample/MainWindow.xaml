@@ -6,6 +6,7 @@
         xmlns:themes="clr-namespace:Walterlv.Windows.Themes;assembly=Walterlv.Themes.FluentDesign"
         xmlns:effects="clr-namespace:Walterlv.Windows.Effects;assembly=Walterlv.Themes.FluentDesign"
         xmlns:local="clr-namespace:Walterlv.Windows.Sample"
+        xmlns:navigating="clr-namespace:Walterlv.Windows.Navigating;assembly=Walterlv.Windows.Framework"
         mc:Ignorable="d"
         Title="Walterlv Packages Sample"
         Style="{StaticResource Style.Window.Universal}"
@@ -17,10 +18,14 @@
     <Window.Resources>
     </Window.Resources>
     <themes:UniversalWindowStyle.TitleBar>
-        <themes:UniversalTitleBar ForegroundColor="{StaticResource Color.Foreground}" InactiveForegroundColor="{StaticResource Color.Foreground.Disable}"
-                                  ButtonForegroundColor="{StaticResource Color.Foreground}" ButtonInactiveForegroundColor="{StaticResource Color.Foreground.Disable}"
-                                  ButtonHoverForeground="{StaticResource Color.Foreground}" ButtonHoverBackground="{StaticResource Color.Theme.Light1}"
-                                  ButtonPressedForeground="{StaticResource Color.Foreground}" ButtonPressedBackground="{StaticResource Color.Theme.Dark1}" />
+        <themes:UniversalTitleBar ForegroundColor="{StaticResource Color.Foreground}"
+                                  InactiveForegroundColor="{StaticResource Color.Foreground.Disable}"
+                                  ButtonForegroundColor="{StaticResource Color.Foreground}"
+                                  ButtonInactiveForegroundColor="{StaticResource Color.Foreground.Disable}"
+                                  ButtonHoverForeground="{StaticResource Color.Foreground}"
+                                  ButtonHoverBackground="{StaticResource Color.Theme.Light1}"
+                                  ButtonPressedForeground="{StaticResource Color.Foreground}"
+                                  ButtonPressedBackground="{StaticResource Color.Theme.Dark1}" />
     </themes:UniversalWindowStyle.TitleBar>
     <Grid>
         <Grid.RowDefinitions>
@@ -42,7 +47,7 @@
                             Background="{TemplateBinding Background}"
                             SnapsToDevicePixels="True">
                         <ScrollViewer Focusable="False" Padding="{TemplateBinding Padding}">
-                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </ScrollViewer>
                     </Border>
                 </ControlTemplate>
@@ -84,7 +89,7 @@
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
-                <DataTemplate DataType="navi:NavigationItem">
+                <DataTemplate DataType="{x:Type navigating:NavigationItem}">
                     <TextBlock Text="{Binding Title}" />
                 </DataTemplate>
             </ListView.ItemTemplate>

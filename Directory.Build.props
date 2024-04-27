@@ -1,0 +1,31 @@
+<Project>
+
+  <Import Project="build\Version.props" />
+
+  <!-- 框架和语言信息 -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
+    <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+        NETSDK1138: 目标框架 netxx 不受支持，将来不会收到安全更新。
+    -->
+    <NoWarn>$(NoWarn);NETSDK1138</NoWarn>
+  </PropertyGroup>
+
+  <!--库信息 -->
+  <PropertyGroup>
+    <Authors>walterlv</Authors>
+    <Company>walterlv</Company>
+    <Product>Walterlv.Packages</Product>
+    <Copyright>Copyright (c) 2019-2021 dotnet campus</Copyright>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/walterlv/Walterlv.Packages.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/walterlv/Walterlv.Packages</PackageProjectUrl>
+  </PropertyGroup>
+
+</Project>
