@@ -1,31 +1,22 @@
 <Project>
-  <Import Project="..\build\Version.props" />
+
+  <Import Project="..\Directory.Build.props" />
+
   <PropertyGroup>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <NoWarn>$(NoWarn);NETSDK1138</NoWarn>
-    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);NETSDK1138</MSBuildWarningsAsMessages>
-    <WarningsAsErrors>$(WarningsAsErrors);CS8600;CS8601;CS8602;CS8603;CS8604;CS8609;CS8610;CS8614;CS8616;CS8618;CS8619;CS8622;CS8625</WarningsAsErrors>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <WarningLevel>5</WarningLevel>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Walterlv.Packages.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Deterministic>true</Deterministic>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <PackageOutputPath>$(MSBuildThisFileDirectory)..\bin\$(Configuration)\Packages\</PackageOutputPath>
-    <Authors>walterlv</Authors>
-    <Company>walterlv</Company>
-    <Product>Walterlv.Packages</Product>
-    <Copyright>Copyright (c) 2019-2021 dotnet campus</Copyright>
-    <RepositoryUrl>https://github.com/walterlv/Walterlv.Packages.git</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/walterlv/Walterlv.Packages</PackageProjectUrl>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="dotnetCampus.SourceYard" Version="1.0.0-alpha01" PrivateAssets="all"/>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all"/>
+    <PackageReference Include="dotnetCampus.SourceYard" Version="1.0.0-alpha01" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
+
 </Project>

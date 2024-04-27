@@ -8,7 +8,7 @@ jobs:
   build:
     strategy:
       matrix:
-        configuration: [Debug, Release]
+        configuration: [ Debug, Release ]
     runs-on: windows-latest
     steps:
 
@@ -18,10 +18,8 @@ jobs:
       - name: Setup
         uses: actions/setup-dotnet@v1
         with:
-            dotnet-version: |
-              3.1.x
-              5.0.x
-              6.0.x
+          dotnet-version: |
+            8.0.x
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
