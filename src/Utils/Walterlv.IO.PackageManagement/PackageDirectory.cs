@@ -174,7 +174,11 @@ namespace Walterlv.IO.PackageManagement
                             continue;
                         }
 
+#if NETCOREAPP3_0_OR_GREATER
                         file.MoveTo(targetFilePath, overwrite: true);
+#else
+                        file.MoveTo(targetFilePath);
+#endif
                     }
 
                     foreach (DirectoryInfo directory in sourceDirectory.EnumerateDirectories())
