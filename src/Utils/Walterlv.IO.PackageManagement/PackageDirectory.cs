@@ -167,7 +167,14 @@ namespace Walterlv.IO.PackageManagement
                     foreach (var file in sourceDirectory.EnumerateFiles())
                     {
                         var targetFilePath = Path.Combine(targetDirectory.FullName, file.Name);
-                        file.MoveTo(targetFilePath);
+
+                        if (overwrite == DirectoryOverwriteStrategy.MergeSkip && File.Exists(targetFilePath))
+                        {
+                            // 合并式跳过，如果目标文件存在，则跳过。
+                            continue;
+                        }
+
+                        file.MoveTo(targetFilePath, overwrite: true);
                     }
 
                     foreach (DirectoryInfo directory in sourceDirectory.EnumerateDirectories())
@@ -322,7 +329,14 @@ namespace Walterlv.IO.PackageManagement
                 foreach (var file in sourceDirectory.EnumerateFiles())
                 {
                     var targetFilePath = Path.Combine(targetDirectory.FullName, file.Name);
-                    file.CopyTo(targetFilePath, true);
+
+                    if (overwrite == DirectoryOverwriteStrategy.MergeSkip && File.Exists(targetFilePath))
+                    {
+                        // 合并式跳过，如果目标文件存在，则跳过。
+                        continue;
+                    }
+
+                    file.CopyTo(targetFilePath, overwrite: true);
                 }
 
                 foreach (DirectoryInfo directory in sourceDirectory.EnumerateDirectories())
@@ -469,6 +483,11 @@ namespace Walterlv.IO.PackageManagement
                     case DirectoryOverwriteStrategy.MergeOverwrite:
                     {
                         // 如果是合并式覆盖，那么不需要删除，也不需要抛异常，直接覆盖即可。
+                    }
+                        break;
+                    case DirectoryOverwriteStrategy.MergeSkip:
+                    {
+                        // 如果是合并式跳过，那么不需要删除，也不需要抛异常，直接跳过即可。
                     }
                         break;
                     default:
