@@ -11,4 +11,8 @@
     <Description>This is an MVVM framework without any document.</Description>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Update="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
+  </ItemGroup>
+
 </Project>

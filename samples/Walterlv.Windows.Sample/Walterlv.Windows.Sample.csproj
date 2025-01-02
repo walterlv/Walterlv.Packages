@@ -7,12 +7,15 @@
     <ApplicationManifest>Properties\App.manifest</ApplicationManifest>
   </PropertyGroup>
 
-	<ItemGroup>
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="dotnetCampus.LatestCSharpFeatures" Version="12.0.0-alpha02" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Analyzers\Walterlv.NullableAttributes\Walterlv.NullableAttributes.csproj" />
     <ProjectReference Include="..\..\src\Frameworks\Walterlv.Windows.Framework\Walterlv.Windows.Framework.Wpf\Walterlv.Windows.Framework.Wpf.csproj" />
     <ProjectReference Include="..\..\src\Themes\Walterlv.Themes.FluentDesign\Walterlv.Themes.FluentDesign.csproj" />
     <ProjectReference Include="..\..\src\Utils\Walterlv.Collections\Walterlv.Collections.csproj" />
