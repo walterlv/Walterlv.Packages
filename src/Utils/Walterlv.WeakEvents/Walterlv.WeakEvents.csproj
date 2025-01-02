@@ -5,4 +5,8 @@
     <Description>This library provide weak event support. You can implement your own event in weak reference, and you can also transform existed CLR events into weak events.</Description>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Update="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
+  </ItemGroup>
+
 </Project>

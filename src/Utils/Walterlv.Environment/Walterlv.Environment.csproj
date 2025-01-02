@@ -8,6 +8,7 @@
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)'!='.NETFramework'">
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.2" />
+    <PackageReference Update="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
   </ItemGroup>
   
 </Project>

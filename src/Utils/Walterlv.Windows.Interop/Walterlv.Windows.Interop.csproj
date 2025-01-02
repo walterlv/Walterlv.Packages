@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Lsj.Util.Win32" Version="6.0.1" />
+    <PackageReference Update="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)'=='.NETFramework'">

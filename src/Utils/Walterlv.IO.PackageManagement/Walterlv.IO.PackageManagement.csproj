@@ -5,4 +5,8 @@
     <Description>Walterlv.IO.PackageManagement is a tool for you to manage packages. It manage a directory with many versions of sub-directories and a current Junction Point linked to one of them.</Description>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Update="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
+  </ItemGroup>
+
 </Project>

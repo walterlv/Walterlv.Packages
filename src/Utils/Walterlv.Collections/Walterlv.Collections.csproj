@@ -5,4 +5,8 @@
     <Description>Provide some kinds of unsual collections such as AsyncQueue for async/await pattern, ObservableConcurrentBag for notification in multi-thread situations.</Description>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Update="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
+  </ItemGroup>
+
 </Project>
