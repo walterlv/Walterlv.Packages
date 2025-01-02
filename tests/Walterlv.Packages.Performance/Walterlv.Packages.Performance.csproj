@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <NoWarn>$(NoWarn);NETSDK1138</NoWarn>
     <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);NETSDK1138</MSBuildWarningsAsMessages>
   </PropertyGroup>
@@ -10,10 +10,10 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" />
-	</ItemGroup>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Utils\Walterlv.Collections\Walterlv.Collections.csproj" />
   </ItemGroup>
-  
+
 </Project>
